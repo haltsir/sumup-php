@@ -17,17 +17,12 @@ class Configuration
     /**
      * @var string
      */
-    private $tokenStorageType;
+    private $cacheItemPool;
 
     /**
      * @var string
      */
-    private $tokenStorage;
-
-    /**
-     * @var string
-     */
-    private $tokenStoragePath;
+    private $fileCachePath;
 
     /**
      * @return string
@@ -72,48 +67,32 @@ class Configuration
     /**
      * @return string
      */
-    public function getTokenStorageType(): string
+    public function getCacheItemPool(): string
     {
-        return $this->tokenStorageType;
+        return $this->cacheItemPool;
     }
 
     /**
-     * @param string $tokenStorageType
+     * @param string $cacheItemPool
      */
-    public function setTokenStorageType(string $tokenStorageType)
+    public function setCacheItemPool(string $cacheItemPool)
     {
-        $this->tokenStorageType = $tokenStorageType;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTokenStorage(): string
-    {
-        return $this->tokenStorage;
-    }
-
-    /**
-     * @param string $tokenStorage
-     */
-    public function setTokenStorage(string $tokenStorage)
-    {
-        $this->tokenStorage = $tokenStorage;
+        $this->cacheItemPool = $cacheItemPool;
     }
 
     /**
      * @return string
      */
-    public function getTokenStoragePath(): ?string
+    public function getFileCachePath(): string
     {
-        return $this->tokenStoragePath;
+        return $this->fileCachePath;
     }
 
     /**
-     * @param string $tokenStoragePath
+     * @param string $fileCachePath
      */
-    public function setTokenStoragePath(string $tokenStoragePath)
+    public function setFileCachePath(string $fileCachePath)
     {
-        $this->tokenStoragePath = $tokenStoragePath;
+        $this->fileCachePath = $fileCachePath;
     }
 }

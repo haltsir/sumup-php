@@ -3,15 +3,15 @@
 namespace Sumup\Api\Security\OAuth2;
 
 use GuzzleHttp\Client;
+use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Request\Request;
-use Sumup\Api\Security\Authentication\TokenStorageInterface;
 
 class OAuthClient
 {
     /**
-     * @var TokenStorageInterface
+     * @var CacheItemPoolInterface
      */
-    protected $tokenStorage;
+    protected $cacheItemPool;
 
     /**
      * @var Client
@@ -19,10 +19,10 @@ class OAuthClient
     protected $httpClient;
 
     public function __construct(
-        TokenStorageInterface $tokenStorage
+        CacheItemPoolInterface $cacheItemPool
     )
     {
-        $this->tokenStorage = $tokenStorage;
+        $this->cacheItemPool = $cacheItemPool;
     }
 
     /**
@@ -33,7 +33,7 @@ class OAuthClient
     public function request(array $scope, Request $request)
     {
         $options = [
-            'headers' => $this->tokenStorage->getToken()
+            'headers' => $this->cacheItemPool->getItem('sumup_access_token')->get()
         ];
 
         if ('POST' === $request->getMethod()) {

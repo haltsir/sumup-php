@@ -1,6 +1,6 @@
 {
-    "name": "haltsir/sumup-php-api",
-    "description": "SumUp PHP integration for the REST API",
+    "name": "sumup/sumup-php-api",
+    "description": "SumUp PHP Client",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -10,18 +10,21 @@
         }
     ],
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "psr/cache": "^1.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^6.2"
+        "phpunit/phpunit": "^6.2",
+        "php-mock/php-mock": "^2.0",
+        "php-mock/php-mock-phpunit": "^2.0"
     },
     "autoload": {
         "psr-4": {
             "Sumup\\Api\\": "src/"
         },
         "files": [
-            "src/Support/helpers.php",
-            "src/Support/setup.php"
+            "src/Sumup/Support/helpers.php",
+            "src/Sumup/Support/setup.php"
         ]
     }
 }
