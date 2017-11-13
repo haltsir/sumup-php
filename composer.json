@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Sumup\\Api\\": "src/"
+            "Sumup\\Api\\": "src/Sumup"
         },
         "files": [
             "src/Sumup/Support/helpers.php",

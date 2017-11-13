@@ -1,10 +1,10 @@
 <?php
 
-namespace Sumup\Api\Sumup\Cache\File;
+namespace Sumup\Api\Cache\File;
 
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
-use Sumup\Api\Sumup\Cache\Exception\InvalidArgumentException;
+use Sumup\Api\Cache\Exception\InvalidArgumentException;
 
 class FileCacheItemPool implements CacheItemPoolInterface
 {

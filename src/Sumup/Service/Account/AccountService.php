@@ -2,6 +2,7 @@
 
 namespace Sumup\Api\Service\Account;
 
+use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Request\Request;
 use Sumup\Api\Service\SumupService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
@@ -22,6 +23,9 @@ class AccountService extends SumupService
                                   ->setUri($this->configuration->getFullEndpoint() . '/me')
                                   ->setQuery($options);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($scope, $request);
+
+        // @todo hydrate model
+        return new Account();
     }
 }

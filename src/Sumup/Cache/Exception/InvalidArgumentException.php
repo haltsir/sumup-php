@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumup\Api\Sumup\Cache\Exception;
+namespace Sumup\Api\Cache\Exception;
 
 class InvalidArgumentException extends \Exception implements \Psr\Cache\InvalidArgumentException
 {

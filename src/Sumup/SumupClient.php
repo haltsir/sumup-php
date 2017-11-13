@@ -1,8 +1,10 @@
 <?php
 
-namespace Sumup\Api\Sumup;
+namespace Sumup\Api;
 
-class SumupClient
+use Sumup\Api\Security\OAuth2\OAuthClient;
+
+class SumupClient extends OAuthClient
 {
 
 }

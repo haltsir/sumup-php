@@ -29,7 +29,7 @@ class Configuration
      */
     public function getEndpoint(): string
     {
-        return $this->endpoint;
+        return getenv('sumup_endpoint') ?: $this->endpoint;
     }
 
     /**
@@ -37,7 +37,7 @@ class Configuration
      */
     public function getFullEndpoint(): string
     {
-        return $this->getEndpoint() . $this->getVersion();
+        return rtrim($this->getEndpoint(), '/') . '/' . $this->getVersion();
     }
 
     /**
@@ -67,7 +67,7 @@ class Configuration
     /**
      * @return string
      */
-    public function getCacheItemPool(): string
+    public function getCachePool(): string
     {
         return $this->cacheItemPool;
     }
@@ -75,7 +75,7 @@ class Configuration
     /**
      * @param string $cacheItemPool
      */
-    public function setCacheItemPool(string $cacheItemPool)
+    public function setCachePool(string $cacheItemPool)
     {
         $this->cacheItemPool = $cacheItemPool;
     }

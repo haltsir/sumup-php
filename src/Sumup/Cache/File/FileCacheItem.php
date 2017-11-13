@@ -1,9 +1,9 @@
 <?php
 
-namespace Sumup\Api\Sumup\Cache\File;
+namespace Sumup\Api\Cache\File;
 
 use Psr\Cache\CacheItemInterface;
-use Sumup\Api\Sumup\Cache\Exception\InvalidArgumentException;
+use Sumup\Api\Cache\Exception\InvalidArgumentException;
 
 class FileCacheItem implements CacheItemInterface
 {
@@ -97,7 +97,7 @@ class FileCacheItem implements CacheItemInterface
         }
 
         if (null === $this->expiration) {
-            $this->expiration = new \DateTime($this->getIntervalFromTime($time));
+            $this->expiration = (new \DateTime())->add($this->getIntervalFromTime($time));
 
             return $this;
         }

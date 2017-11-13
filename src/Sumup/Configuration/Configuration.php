@@ -22,7 +22,7 @@ class Configuration
      */
     public function load()
     {
-        $configFileLocation = __DIR__ . '/../../config/api.php';
+        $configFileLocation = __DIR__ . '/../../../config/api.php';
         if (!file_exists($configFileLocation)) {
             throw new \Exception('Configuration file not found.');
         }

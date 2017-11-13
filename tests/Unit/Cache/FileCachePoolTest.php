@@ -1,7 +1,7 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Sumup\Api\Sumup\Cache\File\FileCacheItemPool;
+use Sumup\Api\Cache\File\FileCacheItemPool;
 
 class FileCachePoolTest extends TestCase
 {
@@ -11,7 +11,7 @@ class FileCachePoolTest extends TestCase
     {
         $pool = new FileCacheItemPool();
         $item = $pool->getItem('test-key');
-        $this->assertInstanceOf(\Sumup\Api\Sumup\Cache\File\FileCacheItem::class, $item);
+        $this->assertInstanceOf(\Sumup\Api\Cache\File\FileCacheItem::class, $item);
 
         $this->expectException(\Psr\Cache\InvalidArgumentException::class);
         $pool->getItem('test{key');
@@ -75,7 +75,7 @@ class FileCachePoolTest extends TestCase
         $this->assertTrue($pool->save($item));
         $this->assertFalse($pool->getItem('test-save')->isHit());
 
-        $this->assertInstanceOf(\Sumup\Api\Sumup\Cache\File\FileCacheItem::class, $item->set('test'));
+        $this->assertInstanceOf(\Sumup\Api\Cache\File\FileCacheItem::class, $item->set('test'));
         $this->assertTrue($pool->save($item));
         $this->assertTrue($pool->getItem('test-save')->isHit());
 
