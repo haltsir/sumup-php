@@ -24,7 +24,7 @@ class OAuthClient implements OAuthClientInterface
     public function __construct(array $options)
     {
         if (sizeof(array_diff(self::REQUIRED_OPTIONS, array_keys($options))) > 0) {
-            new OptionsException('Missing required oAuth client options');
+            throw new OptionsException('Missing required oAuth client options');
         }
 
         $this->options = array_merge($options, [
