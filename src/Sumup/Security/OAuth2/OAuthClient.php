@@ -4,6 +4,7 @@ namespace Sumup\Api\Security\OAuth2;
 
 use GuzzleHttp\Client;
 use Psr\Cache\CacheItemInterface;
+use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Request\Request;
 use Sumup\Api\Cache\Exception\InvalidArgumentException;
@@ -23,14 +24,12 @@ class OAuthClient implements OAuthClientInterface {
         $this->config = $config;
     }
 
-
     /**
      * @param Request $request
      * @return mixed|\Psr\Http\Message\ResponseInterface
      */
     public function request(Request $request)
     {
-
         $accessToken = $this->fetchAccessToken();
 
         $options = [
@@ -49,10 +48,9 @@ class OAuthClient implements OAuthClientInterface {
 
     private function fetchAccessToken()
     {
-
         $cachePool = $this->config->getCache();
 
-        if (!$cachePool) {
+        if (!($cachePool instanceof CacheItemPoolInterface)) {
             throw new OptionsException('Missing required parameter.');
         }
 
@@ -90,9 +88,9 @@ class OAuthClient implements OAuthClientInterface {
         $httpClient = new Client();
         $response = $httpClient->post($configuration->getEndpoint() . '/token', [
             'json' => [
-                'username' => $this->propertyChecker($this->config->getUsername()),
-                'password' => $this->propertyChecker($this->config->getPassword()),
-                'client_id' => $this->propertyChecker($this->config->getClientId()),
+                'username' => $this->config->getUsername(),
+                'password' => $this->config->getPassword(),
+                'client_id' => $this->config->getClientId(),
                 'grant_type' => 'password'
             ]
         ]);
@@ -100,11 +98,4 @@ class OAuthClient implements OAuthClientInterface {
         return json_decode($response->getBody());
     }
 
-    private function propertyChecker($prop)
-    {
-        if (!$prop) {
-            throw new OptionsException('Missing required parameter.');
-        }
-        return $prop;
-    }
 }
