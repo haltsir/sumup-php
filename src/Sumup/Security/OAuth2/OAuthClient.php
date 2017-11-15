@@ -4,41 +4,33 @@ namespace Sumup\Api\Security\OAuth2;
 
 use GuzzleHttp\Client;
 use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Request\Request;
 use Sumup\Api\Cache\Exception\InvalidArgumentException;
-use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Security\Exception\AccessTokenException;
 use Sumup\Api\Security\Exception\OptionsException;
+use Sumup\Api\Model\Client\Configuration as ClientConfiguration;
 
-class OAuthClient implements OAuthClientInterface
-{
-    const REQUIRED_OPTIONS = ['username', 'password', 'client_id'];
+class OAuthClient implements OAuthClientInterface {
 
     /**
-     * @var array
+     * @var ClientConfiguration object
      */
-    protected $options;
+    protected $config;
 
-    public function __construct(array $options)
+    public function __construct(ClientConfiguration $config)
     {
-        if (sizeof(array_diff(self::REQUIRED_OPTIONS, array_keys($options))) > 0) {
-            throw new OptionsException('Missing required oAuth client options');
-        }
-
-        $this->options = array_merge($options, [
-            'cache' => new FileCacheItemPool()
-        ]);
+        $this->config = $config;
     }
 
+
     /**
-     * @param array $scope
      * @param Request $request
      * @return mixed|\Psr\Http\Message\ResponseInterface
      */
-    public function request(array $scope, Request $request)
+    public function request(Request $request)
     {
+
         $accessToken = $this->fetchAccessToken();
 
         $options = [
@@ -57,8 +49,12 @@ class OAuthClient implements OAuthClientInterface
 
     private function fetchAccessToken()
     {
-        /** @var CacheItemPoolInterface $cachePool */
-        $cachePool = $this->options['cache'];
+
+        $cachePool = $this->config->getCache();
+
+        if (!$cachePool) {
+            throw new OptionsException('Missing required parameter.');
+        }
 
         try {
             /** @var CacheItemInterface $cacheItem */
@@ -94,13 +90,21 @@ class OAuthClient implements OAuthClientInterface
         $httpClient = new Client();
         $response = $httpClient->post($configuration->getEndpoint() . '/token', [
             'json' => [
-                'username' => $this->options['username'],
-                'password' => $this->options['password'],
-                'client_id' => $this->options['client_id'],
+                'username' => $this->propertyChecker($this->config->getUsername()),
+                'password' => $this->propertyChecker($this->config->getPassword()),
+                'client_id' => $this->propertyChecker($this->config->getClientId()),
                 'grant_type' => 'password'
             ]
         ]);
 
         return json_decode($response->getBody());
+    }
+
+    private function propertyChecker($prop)
+    {
+        if (!$prop) {
+            throw new OptionsException('Missing required parameter.');
+        }
+        return $prop;
     }
 }
