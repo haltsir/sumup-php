@@ -16,23 +16,21 @@ class MerchantProfileBankAccountService extends SumupService
             throw new \Exception('Invalid arguments provided to ' . __CLASS__ . '.');
         }
 
-        $scope = ['user.payout-settings', 'user.profile', 'user.profile_readonly'];
         $request = (new Request())->setMethod('GET')
                                   ->setUri($this->configuration->getFullEndpoint() .
                                            '/me/merchant-profile/bank-accounts')
                                   ->setQuery($options);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($request);
     }
 
     public function create(array $body)
     {
-        $scope = ['user.payout-settings'];
         $request = (new Request())->setMethod('POST')
                                   ->setUri($this->configuration->getFullEndpoint() .
                                            '/me/merchant-profile/bank-accounts')
                                   ->setBody($body);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($request);
     }
 }

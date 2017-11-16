@@ -29,7 +29,7 @@ class Configuration
      */
     public function getEndpoint(): string
     {
-        return getenv('sumup_endpoint') ?: $this->endpoint;
+        return getenv('SUMUP_ENDPOINT') ?: $this->endpoint;
     }
 
     /**
