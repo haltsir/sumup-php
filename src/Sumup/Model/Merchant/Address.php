@@ -2,8 +2,21 @@
 
 namespace Sumup\Api\Model\Merchant;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class Address
 {
+    use HydratorTrait;
+
+    const MAP = [
+        'addressLine1' => ['path' => 'address_line1'],
+        'addressLine2' => ['path' => 'address_line2'],
+        'regionId' => ['path' => 'region_id'],
+        'regionCode' => ['path' => 'region_code'],
+        'postCode' => ['path' => 'post_code'],
+        'landline' => ['path' => 'landline'],
+    ];
+
     /**
      * @var string
      */

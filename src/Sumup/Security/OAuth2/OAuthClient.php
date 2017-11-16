@@ -33,11 +33,10 @@ class OAuthClient implements OAuthClientInterface
     }
 
     /**
-     * @param array $scope
      * @param Request $request
      * @return mixed|\Psr\Http\Message\ResponseInterface
      */
-    public function request(array $scope, Request $request)
+    public function request(Request $request)
     {
         $accessToken = $this->fetchAccessToken();
 
@@ -46,11 +45,6 @@ class OAuthClient implements OAuthClientInterface
                 'Authorization' => 'Bearer ' . $accessToken
             ]
         ];
-
-//        if ('POST' === $request->getMethod()) {
-//            $body = $request->getBody();
-//            $request->setBody($body + ['scope' => implode(',', $scope)]);
-//        }
 
         return $request->send($options);
     }

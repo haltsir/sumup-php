@@ -6,5 +6,5 @@ use Sumup\Api\Request\Request;
 
 interface OAuthClientInterface
 {
-    public function request(array $scope, Request $request);
+    public function request(Request $request);
 }

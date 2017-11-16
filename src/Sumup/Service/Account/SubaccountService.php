@@ -16,23 +16,21 @@ class SubaccountService extends SumupService
             throw new \Exception('Invalid arguments provided to ' . __CLASS__ . '.');
         }
 
-        $scope = ['user.subaccounts'];
         $request = (new Request())->setMethod('GET')
                                   ->setUri($this->configuration->getFullEndpoint() . '/me')
                                   ->setQuery($options);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($request);
     }
 
     public function create(array $body)
     {
-        $scope = ['user.subaccounts'];
         $request = (new Request())->setMethod('POST')
                                   ->setUri($this->configuration->getFullEndpoint() .
                                            '/me/accounts')
                                   ->setBody($body);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($request);
     }
 
     public function update(string $subaccountId, $body)
@@ -41,13 +39,12 @@ class SubaccountService extends SumupService
             throw new \Exception('Subaccount ID is required.');
         }
 
-        $scope = ['user.subaccounts'];
         $request = (new Request())->setMethod('PUT')
                                   ->setUri($this->configuration->getFullEndpoint() .
                                            '/me/accounts/' . $operatorCode)
                                   ->setBody($body);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($request);
     }
 
     public function delete(string $subaccountId)
@@ -56,11 +53,10 @@ class SubaccountService extends SumupService
             throw new \Exception('Subaccount ID is required.');
         }
 
-        $scope = ['user.subaccounts'];
         $request = (new Request())->setMethod('DELETE')
                                   ->setUri($this->configuration->getFullEndpoint() .
                                            '/me/accounts/' . $subaccountId);
 
-        $response = $this->oAuthClient->request($scope, $request);
+        $response = $this->client->request($request);
     }
 }
