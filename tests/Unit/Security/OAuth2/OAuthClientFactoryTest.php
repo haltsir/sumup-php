@@ -15,8 +15,8 @@ use PHPUnit\Framework\TestCase;
 use PHPUnit_Framework_MockObject_MockObject;
 
 
-class OAuthClientFactoryTest extends TestCase {
-
+class OAuthClientFactoryTest extends TestCase
+{
     /**
      * @var PHPUnit_Framework_MockObject_MockObject|Configuration;
      */
@@ -33,7 +33,5 @@ class OAuthClientFactoryTest extends TestCase {
         $client = (new OAuthClientFactory())->create($this->config);
 
         $this->assertInstanceOf(OAuthClient::class, $client);
-
     }
-
 }

@@ -19,7 +19,8 @@ use Sumup\Api\Security\Exception\AccessTokenException;
 use Sumup\Api\Security\Exception\OptionsException;
 use Sumup\Api\Security\OAuth2\OAuthClient;
 
-class OAuthClientTest extends TestCase {
+class OAuthClientTest extends TestCase
+{
     const OAUTH_CACHE_KEY = 'sumup_oauth_access_token';
     const OAUTH_CACHE_VAL = 'BBB';
 

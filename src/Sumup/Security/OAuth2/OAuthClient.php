@@ -11,8 +11,8 @@ use Sumup\Api\Security\Exception\AccessTokenException;
 use Sumup\Api\Security\Exception\OptionsException;
 use Sumup\Api\Model\Client\Configuration as ClientConfiguration;
 
-class OAuthClient implements OAuthClientInterface {
-
+class OAuthClient implements OAuthClientInterface
+{
     /**
      * @var ClientConfiguration object
      */
@@ -22,10 +22,12 @@ class OAuthClient implements OAuthClientInterface {
      * @var Client
      */
     protected $httpClient;
+
     /**
      * @var CacheItemPoolInterface
      */
-    protected $cache;
+    protected $cachePool;
+
     /**
      * @var Configuration
      */
@@ -36,7 +38,7 @@ class OAuthClient implements OAuthClientInterface {
     {
         $this->config = $config;
         $this->httpClient = $guzzleHttpClient;
-        $this->cache = $cache;
+        $this->cachePool = $cache;
         $this->appSettings = $appSettings;
     }
 
@@ -59,14 +61,8 @@ class OAuthClient implements OAuthClientInterface {
 
     private function fetchAccessToken()
     {
-        $cachePool = $this->cache;
-
-        if (!$cachePool) {
-            throw new OptionsException('Missing required parameter.');
-        }
-
         try {
-            $cacheItem = $cachePool->getItem($this->config->getOauthTokenCacheKey());
+            $cacheItem = $this->cachePool->getItem($this->config->getOauthTokenCacheKey());
             $cacheValue = $cacheItem->get();
 
             if (!empty($cacheValue)) {
@@ -84,7 +80,7 @@ class OAuthClient implements OAuthClientInterface {
                 $cacheItem->expiresAfter($data->expires_in);
             }
 
-            $cachePool->save($cacheItem);
+            $this->cachePool->save($cacheItem);
             return $data->access_token;
         } catch (InvalidArgumentException $e) {
             throw new AccessTokenException($e->getMessage());
