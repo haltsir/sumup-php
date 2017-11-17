@@ -3,33 +3,43 @@
 namespace Sumup\Api\Security\OAuth2;
 
 use GuzzleHttp\Client;
-use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Request\Request;
 use Sumup\Api\Cache\Exception\InvalidArgumentException;
-use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Security\Exception\AccessTokenException;
 use Sumup\Api\Security\Exception\OptionsException;
+use Sumup\Api\Model\Client\Configuration as ClientConfiguration;
 
 class OAuthClient implements OAuthClientInterface
 {
-    const REQUIRED_OPTIONS = ['username', 'password', 'client_id'];
+    /**
+     * @var ClientConfiguration object
+     */
+    protected $config;
 
     /**
-     * @var array
+     * @var Client
      */
-    protected $options;
+    protected $httpClient;
 
-    public function __construct(array $options)
+    /**
+     * @var CacheItemPoolInterface
+     */
+    protected $cachePool;
+
+    /**
+     * @var Configuration
+     */
+    protected $appSettings;
+
+    public function __construct(ClientConfiguration $config, Configuration $appSettings, $guzzleHttpClient,
+                                CacheItemPoolInterface $cache)
     {
-        if (sizeof(array_diff(self::REQUIRED_OPTIONS, array_keys($options))) > 0) {
-            throw new OptionsException('Missing required oAuth client options');
-        }
-
-        $this->options = array_merge($options, [
-            'cache' => new FileCacheItemPool()
-        ]);
+        $this->config = $config;
+        $this->httpClient = $guzzleHttpClient;
+        $this->cachePool = $cache;
+        $this->appSettings = $appSettings;
     }
 
     /**
@@ -51,12 +61,8 @@ class OAuthClient implements OAuthClientInterface
 
     private function fetchAccessToken()
     {
-        /** @var CacheItemPoolInterface $cachePool */
-        $cachePool = $this->options['cache'];
-
         try {
-            /** @var CacheItemInterface $cacheItem */
-            $cacheItem = $cachePool->getItem('sumup_oauth_access_token');
+            $cacheItem = $this->cachePool->getItem($this->config->getOauthTokenCacheKey());
             $cacheValue = $cacheItem->get();
 
             if (!empty($cacheValue)) {
@@ -74,8 +80,7 @@ class OAuthClient implements OAuthClientInterface
                 $cacheItem->expiresAfter($data->expires_in);
             }
 
-            $cachePool->save($cacheItem);
-
+            $this->cachePool->save($cacheItem);
             return $data->access_token;
         } catch (InvalidArgumentException $e) {
             throw new AccessTokenException($e->getMessage());
@@ -84,17 +89,17 @@ class OAuthClient implements OAuthClientInterface
 
     private function fetchAccessTokenRemote()
     {
-        $configuration = (new Configuration())->load();
-        $httpClient = new Client();
-        $response = $httpClient->post($configuration->getEndpoint() . '/token', [
+        $configuration = $this->appSettings->load();
+        $response = $this->httpClient->post($configuration->getEndpoint() . '/token', [
             'json' => [
-                'username' => $this->options['username'],
-                'password' => $this->options['password'],
-                'client_id' => $this->options['client_id'],
+                'username' => $this->config->getUsername(),
+                'password' => $this->config->getPassword(),
+                'client_id' => $this->config->getClientId(),
                 'grant_type' => 'password'
             ]
         ]);
 
         return json_decode($response->getBody());
     }
+
 }
