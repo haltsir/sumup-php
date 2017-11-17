@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zdrav
- * Date: 17-Nov-17
- * Time: 1:39 PM
- */
-
 namespace Unit\Security\OAuth2;
 
 use Sumup\Api\Model\Client\Configuration;

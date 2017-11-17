@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: zdrav
- * Date: 16-Nov-17
- * Time: 1:24 PM
- */
 
 namespace Sumup\Api\Security\OAuth2;
-
 
 use Sumup\Api\Cache\File\FileCacheItemPool;
 use GuzzleHttp\Client;
