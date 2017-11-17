@@ -24,13 +24,11 @@ class Configuration {
     private $client_id;
 
     /**
-     * @var CacheItemPoolInterface
-     */
-    private $cache;
-
-    /**
      * @return string
      */
+    private $oauth_token_cache_key = 'sumup_oauth_access_token';
+
+
     public function getUsername()
     {
         return $this->username;
@@ -79,20 +77,10 @@ class Configuration {
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getCache()
+    public function getOauthTokenCacheKey()
     {
-        return $this->cache;
-
+        return $this->oauth_token_cache_key;
     }
-
-    /**
-     * @param mixed $cache
-     */
-    public function setCache(CacheItemPoolInterface $cache)
-    {
-        $this->cache = $cache;
-    }
-
 }

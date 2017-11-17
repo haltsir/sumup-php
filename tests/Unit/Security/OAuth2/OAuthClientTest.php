@@ -2,85 +2,223 @@
 
 namespace Unit\Security\OAuth2;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Runner\Exception;
+use PHPUnit_Framework_MockObject_MockObject;
+use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Sumup\Api\Cache\Exception\InvalidArgumentException;
 use Sumup\Api\Cache\File\FileCacheItem;
 use Sumup\Api\Cache\File\FileCacheItemPool;
-use Sumup\Api\Model\Client\Configuration;
+use Sumup\Api\Configuration\Configuration;
+use Sumup\Api\Model\Client\Configuration as ClientConfig;
 use Sumup\Api\Request\Request;
+use Sumup\Api\Security\Exception\AccessTokenException;
 use Sumup\Api\Security\Exception\OptionsException;
 use Sumup\Api\Security\OAuth2\OAuthClient;
 
 class OAuthClientTest extends TestCase {
+    const OAUTH_CACHE_KEY = 'sumup_oauth_access_token';
+    const OAUTH_CACHE_VAL = 'BBB';
 
-    protected $cache;
-    protected $config;
-    protected $request;
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject|CacheItemPoolInterface
+     */
+    private $cachePool;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject|CacheItemInterface
+     */
+    private $cacheItem;
+
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject|ClientConfig;
+     */
+    private $config;
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject|Request
+     */
+    private $request;
+    /**
+     * @var PHPUnit_Framework_MockObject_MockObject|Client
+     */
+    private $http;
+    /**
+     * @var OAuthClient
+     */
+    private $client;
+
+    /**
+     * @var Configuration
+     */
+    private $settings;
+
 
     public function setUp()
     {
-        $this->cache = new FileCacheItemPool();
-        $this->config = new Configuration();
-        $this->request = new Request();
+        $this->config = $this->getMockBuilder(ClientConfig::class)
+                             ->getMock();
+        $this->settings = new Configuration();
+
+        $this->http = $this->getMockBuilder(Client::class)
+                           ->disableProxyingToOriginalMethods()
+                           ->setMethods(['post'])
+                           ->getMock();
+
+        $this->cachePool = $this->getMockBuilder(CacheItemPoolInterface::class)
+                                ->getMock();
+
+        $this->client = new OAuthClient($this->config, $this->settings, $this->http, $this->cachePool);
+
+        $this->request = $this->getMockBuilder(Request::class)
+                              ->getMock();
+
+        $this->cacheItem = $this->getMockBuilder(CacheItemInterface::class)
+                                ->getMock();
+
+
         putenv('sumup_endpoint=https://api-theta.sam-app.ro');
     }
 
-    public function testCreateOAuthClientWithMissingCacheParams()
+    public function testShouldFetchAccessTokenFromRemoteApiIfKeyIsNotPresentedInLocalCache()
     {
-        $client = new OAuthClient($this->config);
+        $this->cachePool->expects($this->once())
+                        ->method('getItem')
+                        ->willReturn(new FileCacheItem(self::OAUTH_CACHE_KEY));
 
-        $this->expectException(OptionsException::class);
+        $this->http->expects($this->once())
+                   ->method('post')
+                   ->willReturn(new Response(200, [], '{"access_token": "AAAA"}'));
 
-        $client->request($this->request);
+        $this->request->expects($this->once())
+                      ->method('send')
+                      ->with([
+                                 'headers' => [
+                                     'Authorization' => 'Bearer AAAA'
+                                 ]
+                             ])
+                      ->willReturn(true);
+
+        $this->assertTrue($this->client->request($this->request));
     }
 
-    public function testCreateOAuthClient()
+    public function testShouldFetchAccessTokenFromCacheIfKeyIsPresentedInLocalCache()
     {
-        $this->config->setUsername('zdravko.iliev@sumup.com');
-        $this->config->setPassword('sumup-password');
-        $this->config->setClientId('MEAVA2TL');
-        $this->config->setCache($this->cache);
+        $this->cacheItem->expects($this->once())
+                        ->method('get')
+                        ->willReturn(self::OAUTH_CACHE_VAL);
 
-        $client = new OAuthClient($this->config);
+        $this->cachePool->expects($this->once())
+                        ->method('getItem')
+                        ->willReturn($this->cacheItem);
 
-        $this->assertInstanceOf(OAuthClient::class, $client);
+        $this->http->expects($this->never())
+                   ->method('post')
+                   ->willReturn(false);
+
+        $this->request->expects($this->once())
+                      ->method('send')
+                      ->with([
+                                 'headers' => [
+                                     'Authorization' => 'Bearer BBB'
+                                 ]
+                             ])
+                      ->willReturn(true);
+
+        $this->assertTrue($this->client->request($this->request));
     }
 
-    public function testFetchAccessTokenFromCache()
+
+    public function testShouldSaveAccessTokenAfterRemoteApiCall()
     {
-        $this->assertTrue(false);
+        $this->cacheItem->expects($this->once())
+                        ->method('get')
+                        ->willReturn(null);
+
+        $this->cachePool->expects($this->once())
+                        ->method('getItem')
+                        ->willReturn($this->cacheItem);
+
+        $this->http->expects($this->once())
+                   ->method('post')
+                   ->willReturn(new Response(200, [], '{"access_token": "AAAA"}'));
+
+        $this->cacheItem->expects($this->once())
+                        ->method('set')
+                        ->with('AAAA');
+
+
+        $this->cachePool->expects($this->once())
+                        ->method('save')
+                        ->with($this->cacheItem);
+
+        $this->client->request($this->request);
     }
 
-    /**
-     * @group testing
-     */
-    public function testFetchAccessTokenFromRemote()
+
+    public function testShouldSetExpirationDateIfKeyPresentedAfterApiCall()
     {
-        $this->cache->clear();
-        $this->config->setUsername('zdravko.iliev@sumup.com');
-        $this->config->setPassword('sumup-password');
-        $this->config->setClientId('MEAVA2TL');
-        $this->config->setCache($this->cache);
+        $this->cacheItem->expects($this->once())
+                        ->method('get')
+                        ->willReturn(null);
 
-        $client = new OAuthClient($this->config);
+        $this->cachePool->expects($this->once())
+                        ->method('getItem')
+                        ->willReturn($this->cacheItem);
 
-        // verify that token doesn't exist in cache
-        $token = $this->cache->getItem('sumup_oauth_access_token')->get();
-        $this->assertNull($token);
+        $this->http->expects($this->once())
+                   ->method('post')
+                   ->willReturn(new Response(200, [],
+                                             '{"access_token": "AAAA","expires_in": 10}'));
 
-        // fetch token
-        $client->request($this->request);
-        
+        $this->cacheItem->expects($this->once())
+                        ->method('set')
+                        ->with('AAAA');
+
+        $this->cacheItem->expects($this->once())
+                        ->method('expiresAfter')
+                        ->with(10);
+
+        $this->cachePool->expects($this->once())
+                        ->method('save')
+                        ->with($this->cacheItem);
+
+        $this->client->request($this->request);
     }
 
-    public function testCachedTokenExpiration()
+    public function testShouldThrowExceptionIfAccessTokenIsMissingAfterApiCall()
     {
-        $this->assertTrue(false);
+        $this->cacheItem->expects($this->once())
+                        ->method('get')
+                        ->willReturn(null);
+
+        $this->cachePool->expects($this->once())
+                        ->method('getItem')
+                        ->willReturn($this->cacheItem);
+
+        $this->http->expects($this->once())
+                   ->method('post')
+                   ->willReturn(new Response(200, [],
+                                             '{"missing-token": "missing-token","expires_in": 10}'));
+
+        $this->expectException(AccessTokenException::class);
+
+        $this->cacheItem->expects($this->never())->method('set');
+
+        $this->client->request($this->request);
     }
 
-    public function testRequestCannotFetchAccessToken()
+    public function testShouldThrowExceptionIfCacheIsEmpty()
     {
-        $this->assertTrue(false);
+        $this->expectException(AccessTokenException::class);
+
+        $this->cachePool->expects($this->once())
+                        ->method('getItem')
+                        ->will($this->throwException(new InvalidArgumentException));
+
+        $this->client->request($this->request);
     }
 
 }
