@@ -8,10 +8,6 @@ trait HydratorTrait
 {
     public function hydrate(array $data)
     {
-        if (!is_array($data)) {
-            throw new InvalidArgumentException();
-        }
-
         if (defined('self::MAP')) {
             return $this->hydrateMap($data);
         }
