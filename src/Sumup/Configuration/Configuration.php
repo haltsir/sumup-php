@@ -2,45 +2,173 @@
 
 namespace Sumup\Api\Configuration;
 
-use Sumup\Api\Model\Configuration as ConfigurationModel;
-
-class Configuration
+class Configuration implements ConfigurationInterface
 {
     /**
-     * @var ConfigurationModel
+     * @var string
      */
-    protected $configuration;
+    protected $apiEndpoint = null;
 
-    public function __construct()
+    /**
+     * @var string
+     */
+    protected $apiVersion = 'v0.1';
+
+    /**
+     * @var int|string
+     */
+    protected $clientId = null;
+
+    /**
+     * @var string
+     */
+    protected $clientSecret = null;
+
+    /**
+     * @var string
+     */
+    protected $grantType = 'password';
+
+    /**
+     * @var string
+     */
+    protected $password = null;
+
+    /**
+     * @var string
+     */
+    protected $username = null;
+
+    /**
+     * @var string
+     */
+    protected $oAuthTokenCacheKey = 'sumup_oauth_access_token';
+
+    /**
+     * @return string
+     */
+    public function getApiEndpoint(): string
     {
-        $this->configuration = new ConfigurationModel();
+        return $this->apiEndpoint;
     }
 
     /**
-     * @return ConfigurationModel
-     * @throws \Exception
+     * @param string $apiEndpoint
      */
-    public function load()
+    public function setApiEndpoint(string $apiEndpoint)
     {
-        $configFileLocation = __DIR__ . '/../../../config/api.php';
-        if (!file_exists($configFileLocation)) {
-            throw new \Exception('Configuration file not found.');
-        }
+        $this->apiEndpoint = $apiEndpoint;
+    }
 
-        $data = require $configFileLocation;
-        if (!is_array($data)) {
-            throw new \Exception('Unexpected configuration format.');
-        }
+    /**
+     * @return string
+     */
+    public function getApiVersion(): string
+    {
+        return $this->apiVersion;
+    }
 
-        foreach ($data as $key => $val) {
-            $methodName = 'set' . ucfirst(underscoreToCamelCase($key));
-            if (false === method_exists($this->configuration, $methodName)) {
-                throw new \Exception('Configuration property ' . $key . ' unknown.');
-            }
+    /**
+     * @param string $apiVersion
+     */
+    public function setApiVersion(string $apiVersion)
+    {
+        $this->apiVersion = $apiVersion;
+    }
 
-            $this->configuration->{$methodName}($val);
-        }
+    /**
+     * @return string
+     */
+    public function getFullEndpoint(): string
+    {
+        return rtrim($this->getApiEndpoint(), '/') . '/' . $this->getApiVersion();
+    }
 
-        return $this->configuration;
+    /**
+     * @return int|string
+     */
+    public function getClientId()
+    {
+        return $this->clientId;
+    }
+
+    /**
+     * @param int|string $clientId
+     */
+    public function setClientId($clientId)
+    {
+        $this->clientId = $clientId;
+    }
+
+    /**
+     * @return string
+     */
+    public function getClientSecret(): ?string
+    {
+        return $this->clientSecret;
+    }
+
+    /**
+     * @param string $clientSecret
+     */
+    public function setClientSecret(string $clientSecret)
+    {
+        $this->clientSecret = $clientSecret;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGrantType(): ?string
+    {
+        return $this->grantType;
+    }
+
+    /**
+     * @param string $grantType
+     */
+    public function setGrantType(string $grantType)
+    {
+        $this->grantType = $grantType;
+    }
+
+    /**
+     * @return string
+     */
+    public function getOAuthTokenCacheKey(): ?string
+    {
+        return $this->oAuthTokenCacheKey;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPassword(): ?string
+    {
+        return $this->password;
+    }
+
+    /**
+     * @param string $password
+     */
+    public function setPassword(string $password)
+    {
+        $this->password = $password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUsername(): ?string
+    {
+        return $this->username;
+    }
+
+    /**
+     * @param string $username
+     */
+    public function setUsername(string $username)
+    {
+        $this->username = $username;
     }
 }

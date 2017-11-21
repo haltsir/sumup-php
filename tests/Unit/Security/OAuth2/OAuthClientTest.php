@@ -5,18 +5,15 @@ namespace Unit\Security\OAuth2;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Runner\Exception;
 use PHPUnit_Framework_MockObject_MockObject;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Cache\Exception\InvalidArgumentException;
 use Sumup\Api\Cache\File\FileCacheItem;
-use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Model\Client\Configuration as ClientConfig;
-use Sumup\Api\Request\Request;
+use Sumup\Api\Http\Request;
 use Sumup\Api\Security\Exception\AccessTokenException;
-use Sumup\Api\Security\Exception\OptionsException;
 use Sumup\Api\Security\OAuth2\OAuthClient;
 
 class OAuthClientTest extends TestCase
@@ -71,7 +68,7 @@ class OAuthClientTest extends TestCase
         $this->cachePool = $this->getMockBuilder(CacheItemPoolInterface::class)
                                 ->getMock();
 
-        $this->client = new OAuthClient($this->config, $this->settings, $this->http, $this->cachePool);
+        $this->client = new OAuthClient($this->config, $this->http, $this->cachePool);
 
         $this->request = $this->getMockBuilder(Request::class)
                               ->getMock();

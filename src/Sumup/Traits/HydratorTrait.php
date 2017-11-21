@@ -2,7 +2,7 @@
 
 namespace Sumup\Api\Traits;
 
-use Sumup\Api\Request\Exception\InvalidArgumentException;
+use Sumup\Api\Http\Exception\InvalidArgumentException;
 
 trait HydratorTrait
 {
