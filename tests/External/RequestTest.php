@@ -3,7 +3,7 @@
 namespace External;
 
 use PHPUnit\Framework\TestCase;
-use Sumup\Api\Request\Request;
+use Sumup\Api\Http\Request;
 
 class RequestTest extends TestCase
 {

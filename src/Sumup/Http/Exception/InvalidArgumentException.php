@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumup\Api\Request\Exception;
+namespace Sumup\Api\Http\Exception;
 
 class InvalidArgumentException extends \Exception
 {

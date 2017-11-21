@@ -4,8 +4,8 @@ namespace Integration\Account;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
+use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Model\Merchant\Address;
-use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\SumupClient;
 
 class AccountTest extends TestCase
@@ -14,19 +14,19 @@ class AccountTest extends TestCase
     {
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
-        putenv('SUMUP_ENDPOINT=' . getenv('SUMUP_TEST_ENDPOINT'));
     }
 
     public function testCall()
     {
-        $client = new SumupClient(
-            [
-                'username' => getenv('SUMUP_TEST_USERNAME'),
-                'password' => getenv('SUMUP_TEST_PASSWORD'),
-                'client_id' => getenv('SUMUP_TEST_CLIENT_ID')
-            ]
-        );
-        $accountService = new AccountService($client);
+        $configuration = new Configuration();
+        $configuration->setUsername(getenv('SUMUP_TEST_USERNAME'));
+        $configuration->setPassword(getenv('SUMUP_TEST_PASSWORD'));
+        $configuration->setClientId(getenv('SUMUP_TEST_CLIENT_ID'));
+        $configuration->setApiEndpoint(getenv('SUMUP_TEST_ENDPOINT'));
+
+        $client = new SumupClient($configuration);
+        $accountService = $client->createService('account');
+
         $result = $accountService->get();
         $this->assertInstanceOf(Address::class, $result->address);
     }

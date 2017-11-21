@@ -2,24 +2,23 @@
 
 namespace Sumup\Api\Security\OAuth2;
 
-use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Configuration\Configuration;
-use Sumup\Api\Request\Request;
+use Sumup\Api\Configuration\ConfigurationInterface;
+use Sumup\Api\Http\Request;
 use Sumup\Api\Cache\Exception\InvalidArgumentException;
 use Sumup\Api\Security\Exception\AccessTokenException;
-use Sumup\Api\Security\Exception\OptionsException;
-use Sumup\Api\Model\Client\Configuration as ClientConfiguration;
 
 class OAuthClient implements OAuthClientInterface
 {
     /**
-     * @var ClientConfiguration object
+     * @var ConfigurationInterface object
      */
-    protected $config;
+    protected $configuration;
 
     /**
-     * @var Client
+     * @var ClientInterface
      */
     protected $httpClient;
 
@@ -33,13 +32,15 @@ class OAuthClient implements OAuthClientInterface
      */
     protected $appSettings;
 
-    public function __construct(ClientConfiguration $config, Configuration $appSettings, $guzzleHttpClient,
-                                CacheItemPoolInterface $cache)
+    public function __construct(
+        ConfigurationInterface $configuration,
+        ClientInterface $httpClient,
+        CacheItemPoolInterface $cache
+    )
     {
-        $this->config = $config;
-        $this->httpClient = $guzzleHttpClient;
+        $this->configuration = $configuration;
+        $this->httpClient = $httpClient;
         $this->cachePool = $cache;
-        $this->appSettings = $appSettings;
     }
 
     /**
@@ -59,10 +60,16 @@ class OAuthClient implements OAuthClientInterface
         return $request->send($options);
     }
 
+    /**
+     * Return access token. Generate new if needed.
+     *
+     * @return mixed
+     * @throws AccessTokenException
+     */
     private function fetchAccessToken()
     {
         try {
-            $cacheItem = $this->cachePool->getItem($this->config->getOauthTokenCacheKey());
+            $cacheItem = $this->cachePool->getItem($this->configuration->getOAuthTokenCacheKey());
             $cacheValue = $cacheItem->get();
 
             if (!empty($cacheValue)) {
@@ -81,25 +88,29 @@ class OAuthClient implements OAuthClientInterface
             }
 
             $this->cachePool->save($cacheItem);
+
             return $data->access_token;
         } catch (InvalidArgumentException $e) {
             throw new AccessTokenException($e->getMessage());
         }
     }
 
+    /**
+     * Authenticate in the API.
+     *
+     * @return mixed
+     */
     private function fetchAccessTokenRemote()
     {
-        $configuration = $this->appSettings->load();
-        $response = $this->httpClient->post($configuration->getEndpoint() . '/token', [
+        $response = $this->httpClient->post($this->configuration->getApiEndpoint() . '/token', [
             'json' => [
-                'username' => $this->config->getUsername(),
-                'password' => $this->config->getPassword(),
-                'client_id' => $this->config->getClientId(),
+                'username' => $this->configuration->getUsername(),
+                'password' => $this->configuration->getPassword(),
+                'client_id' => $this->configuration->getClientId(),
                 'grant_type' => 'password'
             ]
         ]);
 
         return json_decode($response->getBody());
     }
-
 }

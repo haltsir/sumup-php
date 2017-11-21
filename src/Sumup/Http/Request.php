@@ -1,8 +1,9 @@
 <?php
 
-namespace Sumup\Api\Request;
+namespace Sumup\Api\Http;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 
 class Request
 {
@@ -31,9 +32,9 @@ class Request
      */
     protected $httpClient;
 
-    public function __construct()
+    public function __construct(ClientInterface $httpClient)
     {
-        $this->httpClient = new Client();
+        $this->httpClient = $httpClient;
     }
 
     /**

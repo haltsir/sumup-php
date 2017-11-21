@@ -2,7 +2,7 @@
 
 namespace Sumup\Api\Security\OAuth2;
 
-use Sumup\Api\Request\Request;
+use Sumup\Api\Http\Request;
 
 interface OAuthClientInterface
 {
