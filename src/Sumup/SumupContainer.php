@@ -12,9 +12,11 @@ use Sumup\Api\Container\Exception\NotFoundException;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Merchant;
+use Sumup\Api\Model\Merchant\Profile;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
+use Sumup\Api\Service\Account\PersonalProfileService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 
@@ -78,6 +80,16 @@ class SumupContainer extends Container implements ContainerInterface
             return new MerchantProfileService($container['configuration'], $container['oauth.client'],
                                               $container['http.request'], $container['merchant.model']);
         });
+
+        /* Personal Profile */
+        $this['profile.model'] = $this->factory(function () {
+            return new Profile();
+        });
+        $this['personal_profile.service'] = $this->factory(function ($container) {
+            return new PersonalProfileService($container['profile.model'], $container['http.request'],
+                                              $container['configuration'], $container['oauth.client']);
+        });
+
     }
 
     /**
