@@ -9,13 +9,22 @@ class Address
     use HydratorTrait;
 
     const MAP = [
-        'addressLine1' => ['path' => 'address_line1'],
-        'addressLine2' => ['path' => 'address_line2'],
-        'regionId' => ['path' => 'region_id'],
-        'regionCode' => ['path' => 'region_code'],
-        'postCode' => ['path' => 'post_code'],
-        'landline' => ['path' => 'landline'],
-    ];
+            'addressLine1' => ['path' => 'address_line1'],
+            'addressLine2' => ['path' => 'address_line2'],
+            'regionId' => ['path' => 'region_id'],
+            'regionCode' => ['path' => 'region_code'],
+            'postCode' => ['path' => 'post_code'],
+            'landline' => ['path' => 'landline'],
+            'stateId' => ['path' => 'state_id'],
+            'countryDetails' => [
+                'path' => 'country_details',
+                'type' => Country::class
+            ],
+            'timeoffsetDetails' => [
+                'path' => 'timeoffset_details',
+                'type' => Timeoffset::class
+            ]
+        ];
 
     /**
      * @var string
