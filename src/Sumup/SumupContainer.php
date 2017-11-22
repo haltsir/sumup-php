@@ -11,8 +11,10 @@ use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
+use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
+use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 
@@ -27,7 +29,7 @@ class SumupContainer extends Container implements ContainerInterface
         $this['cache.file.path'] = sys_get_temp_dir();
 
         /* HTTP */
-        $this['http.client'] = $this->factory(function ($container) {
+        $this['http.client'] = $this->factory(function () {
             return new Client();
         });
         $this['http.request'] = $this->factory(function ($container) {
@@ -59,13 +61,22 @@ class SumupContainer extends Container implements ContainerInterface
         });
 
         /* Account */
-        $this['account.model'] = $this->factory(function ($container) {
+        $this['account.model'] = $this->factory(function () {
             return new Account();
         });
         $this['account.service'] = $this->factory(function ($container) {
-            return new AccountService($container['account.model'], $container['validator.allowed_arguments'],
-                                      $container['http.request'], $container['configuration'],
-                                      $container['oauth.client']);
+            return new AccountService($container['configuration'], $container['oauth.client'],
+                                      $container['http.request'], $container['account.model'],
+                                      $container['validator.allowed_arguments']);
+        });
+
+        /* Merchant Profile */
+        $this['merchant.model'] = $this->factory(function () {
+            return new Merchant;
+        });
+        $this['merchant.profile.service'] = $this->factory(function ($container) {
+            return new MerchantProfileService($container['configuration'], $container['oauth.client'],
+                                              $container['http.request'], $container['merchant.model']);
         });
     }
 

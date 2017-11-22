@@ -2,8 +2,40 @@
 
 namespace Sumup\Api\Model\Merchant;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class Merchant
 {
+    use HydratorTrait;
+
+    const MAP = [
+        'merchantCode' => ['path' => 'merchant_code'],
+        'companyName' => ['path' => 'company_name'],
+        'legalType' => [
+            'path' => 'legal_type',
+            'type' => LegalType::class
+        ],
+        'merchantCategoryCode' => ['path' => 'merchant_category_code'],
+        'mobilePhone' => ['path' => 'mobile_phone'],
+        'companyRegistrationNumber' => ['path' => 'company_registration_number'],
+        'vatId' => ['path' => 'vat_id'],
+        'permanentCertificateAccessCode' => ['path' => 'permanent_certificate_access_code'],
+        'natureAndPurpose' => ['path' => 'nature_and_purpose'],
+        'address' => [
+            'path' => 'address',
+            'type' => Address::class
+        ],
+        'businessOwners' => [
+            'path' => 'business_owners',
+            'type' => 'array',
+            'subtype' => Business::class
+        ],
+        'doingBusinessAs' => [
+            'path' => 'doing_business_as',
+            'type' => Business::class
+        ]
+    ];
+
     /**
      * @var string
      */

@@ -2,8 +2,20 @@
 
 namespace Sumup\Api\Model\Merchant;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class Business
 {
+    use HydratorTrait;
+
+    const MAP = [
+        'businessName' => ['path' => 'business_name'],
+        'address' => [
+            'path' => 'address',
+            'type' => Address::class
+        ]
+    ];
+
     /**
      * @var string
      */
