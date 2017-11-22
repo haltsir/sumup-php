@@ -2,45 +2,48 @@
 
 namespace External;
 
+use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Http\Request;
 
 class RequestTest extends TestCase
 {
+    protected $request;
+
+    public function setUp()
+    {
+        $this->request = new Request(new Client());
+    }
+
     public function testInvalidUri()
     {
-        $request = new Request();
         $this->expectException(\Exception::class);
-        $request->setUri('example.org');
+        $this->request->setUri('example.org');
     }
 
     public function testSendRequest()
     {
-        $request = new Request();
-        $response = $request->setMethod('GET')
-                            ->setUri('http://example.org')
-                            ->send();
+        $response = $this->request->setMethod('GET')
+                                  ->setUri('http://example.org')
+                                  ->send();
         $this->assertEquals(200, $response->getStatusCode());
         $this->assertEquals('OK', $response->getReasonPhrase());
     }
 
     public function testUnexpectedMethod()
     {
-        $request = new Request();
         $this->expectException(\Exception::class);
-        $request->setMethod('DUMMY');
+        $this->request->setMethod('DUMMY');
     }
 
     public function testNoExplicitMethod()
     {
-        $request = new Request();
-        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('GET', $this->request->getMethod());
     }
 
     public function testSendEmptyUri()
     {
-        $request = new Request;
         $this->expectException(\TypeError::class);
-        $request->send();
+        $this->request->send();
     }
 }
