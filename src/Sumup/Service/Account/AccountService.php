@@ -42,14 +42,19 @@ class AccountService extends SumupService
 
     /**
      * AccountService constructor.
-     * @param Account $account
-     * @param string $allowedArgumentsValidator
      * @param Request $request
      * @param ConfigurationInterface $configuration
      * @param OAuthClientInterface $client
+     * @param Account $account
+     * @param string $allowedArgumentsValidator
      */
-    public function __construct(Account $account, string $allowedArgumentsValidator, Request $request,
-                                ConfigurationInterface $configuration, OAuthClientInterface $client)
+    public function __construct(
+        ConfigurationInterface $configuration,
+        OAuthClientInterface $client,
+        Request $request,
+        Account $account,
+        string $allowedArgumentsValidator
+    )
     {
         $this->accountModel = $account;
         $this->allowedArgumentsValidator = $allowedArgumentsValidator;

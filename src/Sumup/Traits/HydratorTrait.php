@@ -2,8 +2,6 @@
 
 namespace Sumup\Api\Traits;
 
-use Sumup\Api\Http\Exception\InvalidArgumentException;
-
 trait HydratorTrait
 {
     public function hydrate(array $data)
@@ -12,7 +10,7 @@ trait HydratorTrait
             return $this->hydrateMap($data);
         }
 
-        foreach ($this as $property) {
+        foreach (array_keys(get_object_vars($this)) as $property) {
             if (!array_key_exists($property, $data)) {
                 continue;
             }
@@ -48,9 +46,10 @@ trait HydratorTrait
     {
         $path = $map['path'] ?? $property;
         $type = $map['type'] ?? 'string';
+        $subtype = $map['subtype'] ?? null;
 
         if (false === strpos($path, '.')) {
-            return $this->resolveValue($type, $data[$path] ?? null);
+            return $this->resolveValueByType($type, $subtype, $data[$path] ?? null);
         }
 
         $value = $data;
@@ -65,6 +64,17 @@ trait HydratorTrait
         return $this->resolveValue($type, $value);
     }
 
+    private function resolveValueByType($type, $subtype, $data)
+    {
+        switch ($type) {
+            case 'array':
+                return $this->resolveValueArray($subtype, $data);
+            case 'string':
+            default:
+                return $this->resolveValue($type, $data);
+        }
+    }
+
     /**
      * @param string $type
      * @param mixed $data
@@ -73,5 +83,15 @@ trait HydratorTrait
     private function resolveValue(string $type, $data)
     {
         return (class_exists($type) && is_array($data) ? (new $type)->hydrate($data) : $data);
+    }
+
+    private function resolveValueArray($type, $data)
+    {
+        $results = [];
+        foreach ($data as $subdata) {
+            $results[] = $this->resolveValue($type, $subdata);
+        }
+
+        return $results;
     }
 }
