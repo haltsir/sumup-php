@@ -8,7 +8,7 @@ class Profile
 {
     use HydratorTrait;
 
-    const MAP = [
+    const MAP_JSON_TO_ENTITY = [
             'firstName' => ['path' => 'first_name'],
             'lastName' => ['path' => 'last_name'],
             'dateOfBirth' => ['path' => 'date_of_birth'],

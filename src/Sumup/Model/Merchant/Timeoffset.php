@@ -8,7 +8,7 @@ class Timeoffset
 {
     use HydratorTrait;
 
-    const MAP = [
+    const MAP_JSON_TO_ENTITY = [
             'postCode' => ['path' => 'post_code'],
         ];
 

@@ -8,7 +8,7 @@ class Country
 {
     use HydratorTrait;
 
-    const MAP = [
+    const MAP_JSON_TO_ENTITY = [
             'isoCode' => ['path' => 'iso_code'],
             'enName' => ['path' => 'en_name'],
             'nativeName' => ['path' => 'native_name'],
