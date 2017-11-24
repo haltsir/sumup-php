@@ -122,6 +122,11 @@ class Request
         return $this;
     }
 
+    public function setJson(string $content)
+    {
+        return $this->setBody(json_decode($content, true));
+    }
+
     /**
      * @param array $options
      * @return mixed|\Psr\Http\Message\ResponseInterface
@@ -129,7 +134,7 @@ class Request
     public function send(array $options = [])
     {
         if (in_array($this->getMethod(), ['POST', 'PUT'])) {
-            $options = [
+            $options += [
                 'json' => $this->getBody(),
                 'query' => $this->getQuery()
             ];

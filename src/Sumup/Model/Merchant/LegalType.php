@@ -8,7 +8,7 @@ class LegalType
 {
     use HydratorTrait;
 
-    const MAP = [
+    const MAP_JSON_TO_ENTITY = [
         'soleTrader' => ['path' => 'sole_trader']
     ];
 

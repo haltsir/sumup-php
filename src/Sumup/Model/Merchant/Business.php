@@ -8,7 +8,7 @@ class Business
 {
     use HydratorTrait;
 
-    const MAP = [
+    const MAP_JSON_TO_ENTITY = [
         'businessName' => ['path' => 'business_name'],
         'address' => [
             'path' => 'address',

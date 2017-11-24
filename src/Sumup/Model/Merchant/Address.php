@@ -8,7 +8,7 @@ class Address
 {
     use HydratorTrait;
 
-    const MAP = [
+    const MAP_JSON_TO_ENTITY = [
         'addressLine1' => ['path' => 'address_line1'],
         'addressLine2' => ['path' => 'address_line2'],
         'regionId' => ['path' => 'region_id'],

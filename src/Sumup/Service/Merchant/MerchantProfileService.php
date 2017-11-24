@@ -57,12 +57,11 @@ class MerchantProfileService extends SumupService
         return $this->merchantModel->hydrate(json_decode((string)$response->getBody(), true));
     }
 
-    public function update(array $body)
+    public function update(Merchant $merchant)
     {
-//        $request = (new Request())->setMethod('PUT')
-//                                  ->setUri($this->configuration->getFullEndpoint() . '/me/merchant-profile')
-//                                  ->setBody($body);
-//
-//        $response = $this->client->request($request);
+        $request = $this->request->setMethod('PUT')
+                                 ->setUri($this->configuration->getFullEndpoint() . '/me/merchant-profile')
+                                 ->setJson($merchant->serialize());
+        $response = $this->client->request($request);
     }
 }
