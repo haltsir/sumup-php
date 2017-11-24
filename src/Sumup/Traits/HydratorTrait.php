@@ -4,9 +4,15 @@ namespace Sumup\Api\Traits;
 
 trait HydratorTrait
 {
+    /**
+     * Hydrate entity based on data from the API.
+     *
+     * @param array $data
+     * @return $this
+     */
     public function hydrate(array $data)
     {
-        if (defined('self::MAP')) {
+        if (defined('self::MAP_JSON_TO_ENTITY')) {
             return $this->hydrateMap($data);
         }
 
@@ -21,35 +27,49 @@ trait HydratorTrait
         return $this;
     }
 
+    /**
+     * Hydrate mapped entity.
+     *
+     * @param array $data
+     * @return $this
+     */
     private function hydrateMap(array $data)
     {
-        if (false === defined('self::MAP')) {
+        if (false === defined('self::MAP_JSON_TO_ENTITY')) {
             return $this;
         }
 
         foreach (array_keys((array)$this) as $property) {
-            if (!isset(self::MAP[$property])) {
+            if (!isset(self::MAP_JSON_TO_ENTITY[$property])) {
                 if (isset($data[$property])) {
                     $this->$property = $data[$property];
                 }
                 continue;
             }
 
-            $map = self::MAP[$property];
-            $this->$property = $this->resolveMap($property, $map, $data);
+            $map = self::MAP_JSON_TO_ENTITY[$property];
+            $this->$property = $this->resolveHydrationMap($property, $map, $data);
         }
 
         return $this;
     }
 
-    private function resolveMap($property, $map, $data)
+    /**
+     * Resolve map keys and values to their entity counterparts.
+     *
+     * @param $property
+     * @param $map
+     * @param $data
+     * @return array|mixed|null
+     */
+    private function resolveHydrationMap($property, $map, $data)
     {
         $path = $map['path'] ?? $property;
         $type = $map['type'] ?? 'string';
         $subtype = $map['subtype'] ?? null;
 
         if (false === strpos($path, '.')) {
-            return $this->resolveValueByType($type, $subtype, $data[$path] ?? null);
+            return $this->resolveHydrationValueByType($type, $subtype, $data[$path] ?? null);
         }
 
         $value = $data;
@@ -61,35 +81,52 @@ trait HydratorTrait
             $value = $value[$key];
         }
 
-        return $this->resolveValue($type, $value);
+        return $this->resolveHydrationValue($type, $value);
     }
 
-    private function resolveValueByType($type, $subtype, $data)
+    /**
+     * Resolve value by key type.
+     *
+     * @param $type
+     * @param $subtype
+     * @param $data
+     * @return array|mixed
+     */
+    private function resolveHydrationValueByType($type, $subtype, $data)
     {
         switch ($type) {
             case 'array':
-                return $this->resolveValueArray($subtype, $data);
+                return $this->resolveHydrationValueArray($subtype, $data);
             case 'string':
             default:
-                return $this->resolveValue($type, $data);
+                return $this->resolveHydrationValue($type, $data);
         }
     }
 
     /**
+     * Resolve value of type class and string.
+     *
      * @param string $type
      * @param mixed $data
      * @return mixed
      */
-    private function resolveValue(string $type, $data)
+    private function resolveHydrationValue(string $type, $data)
     {
         return (class_exists($type) && is_array($data) ? (new $type)->hydrate($data) : $data);
     }
 
-    private function resolveValueArray($type, $data)
+    /**
+     * Resolve value of type array.
+     *
+     * @param $type
+     * @param $data
+     * @return array
+     */
+    private function resolveHydrationValueArray($type, $data)
     {
         $results = [];
         foreach ($data as $subdata) {
-            $results[] = $this->resolveValue($type, $subdata);
+            $results[] = $this->resolveHydrationValue($type, $subdata);
         }
 
         return $results;

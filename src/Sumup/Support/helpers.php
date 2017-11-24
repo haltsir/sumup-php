@@ -1,7 +1,7 @@
 <?php
 
-if (!function_exists('underscoreToCamelCase')) {
-    function underscoreToCamelCase($string)
+if (!function_exists('snakeCaseToCamelCase')) {
+    function snakeCaseToCamelCase($string)
     {
         return preg_replace_callback(
             '/_(.?)/',
@@ -10,6 +10,13 @@ if (!function_exists('underscoreToCamelCase')) {
             },
             $string
         );
+    }
+}
+
+if (!function_exists('camelCaseToSnakeCase')) {
+    function camelCaseToSnakeCase($string)
+    {
+        return strtolower(preg_replace(['/([a-z\d])([A-Z])/', '/([^_])([A-Z][a-z])/'], '$1_$2', $string));
     }
 }
 

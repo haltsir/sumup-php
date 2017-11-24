@@ -22,7 +22,7 @@ class MerchantProfileTest extends TestCase
         $this->configuration->setApiEndpoint(getenv('SUMUP_TEST_ENDPOINT'));
     }
 
-    public function testCall()
+    public function testGetProfile()
     {
         $client = new SumupClient($this->configuration);
         $merchantProfileService = $client->createService('merchant.profile');
@@ -30,4 +30,17 @@ class MerchantProfileTest extends TestCase
         $result = $merchantProfileService->get();
         $this->assertNotEmpty($result->merchantCode);
     }
+
+    /**
+     * Test cannot be completed due to API bug.
+     *
+    public function testUpdate()
+    {
+        $client = new SumupClient($this->configuration);
+        $merchantProfileService = $client->createService('merchant.profile');
+
+        $merchant = $merchantProfileService->get();
+        $result = $merchantProfileService->update($merchant);
+    }
+    */
 }
