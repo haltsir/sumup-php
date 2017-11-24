@@ -36,7 +36,7 @@ trait SerializerTrait
                 continue;
             }
 
-            $newKey = camelCaseToUnderscore($key);
+            $newKey = camelCaseToSnakeCase($key);
             if (is_object($value)) {
                 $value = get_object_vars($value);
             }
