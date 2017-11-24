@@ -15,6 +15,15 @@ class Address
         'regionCode' => ['path' => 'region_code'],
         'postCode' => ['path' => 'post_code'],
         'landline' => ['path' => 'landline'],
+        'stateId' => ['path' => 'state_id'],
+        'countryDetails' => [
+            'path' => 'country_details',
+            'type' => Country::class
+        ],
+        'timeoffsetDetails' => [
+            'path' => 'timeoffset_details',
+            'type' => Timeoffset::class
+        ]
     ];
 
     /**

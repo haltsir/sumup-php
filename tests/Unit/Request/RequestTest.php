@@ -2,50 +2,39 @@
 
 namespace Unit\Request;
 
+use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Http\Request;
 
 class RequestTest extends TestCase
 {
-    /**
-     * @covers Request::getMethod()
-     */
+    public $request;
+
+    public function setUp()
+    {
+        $this->request = new Request(new Client());
+    }
+
     public function testDefaultMethod()
     {
-        $request = new Request();
-        $this->assertEquals('GET', $request->getMethod());
+        $this->assertEquals('GET', $this->request->getMethod());
     }
 
-    /**
-     * @covers Request::getMethod()
-     * @covers Request::setMethod()
-     */
     public function testMethod()
     {
-        $request = new Request();
-        $request->setMethod('POST');
-        $this->assertEquals('POST', $request->getMethod());
+        $this->request->setMethod('POST');
+        $this->assertEquals('POST', $this->request->getMethod());
     }
 
-    /**
-     * @covers Request::getUri()
-     * @covers Request::setUri()
-     */
     public function testUri()
     {
-        $request = new Request();
-        $request->setUri('http://example.org/test');
-        $this->assertEquals('http://example.org/test', $request->getUri());
+        $this->request->setUri('http://example.org/test');
+        $this->assertEquals('http://example.org/test', $this->request->getUri());
     }
 
-    /**
-     * @covers Request::getBody()
-     * @covers Request::setBody()
-     */
     public function testBody()
     {
-        $request = new Request();
-        $request->setBody(['property' => 'value', 'key' => 'dummy']);
-        $this->assertArraySubset(['property' => 'value', 'key' => 'dummy'], $request->getBody());
+        $this->request->setBody(['property' => 'value', 'key' => 'dummy']);
+        $this->assertArraySubset(['property' => 'value', 'key' => 'dummy'], $this->request->getBody());
     }
 }

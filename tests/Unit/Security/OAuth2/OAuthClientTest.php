@@ -11,7 +11,6 @@ use Psr\Cache\CacheItemPoolInterface;
 use Sumup\Api\Cache\Exception\InvalidArgumentException;
 use Sumup\Api\Cache\File\FileCacheItem;
 use Sumup\Api\Configuration\Configuration;
-use Sumup\Api\Model\Client\Configuration as ClientConfig;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Security\Exception\AccessTokenException;
 use Sumup\Api\Security\OAuth2\OAuthClient;
@@ -32,7 +31,7 @@ class OAuthClientTest extends TestCase
     private $cacheItem;
 
     /**
-     * @var PHPUnit_Framework_MockObject_MockObject|ClientConfig;
+     * @var PHPUnit_Framework_MockObject_MockObject|Configuration
      */
     private $config;
     /**
@@ -48,17 +47,11 @@ class OAuthClientTest extends TestCase
      */
     private $client;
 
-    /**
-     * @var Configuration
-     */
-    private $settings;
-
 
     public function setUp()
     {
-        $this->config = $this->getMockBuilder(ClientConfig::class)
+        $this->config = $this->getMockBuilder(Configuration::class)
                              ->getMock();
-        $this->settings = new Configuration();
 
         $this->http = $this->getMockBuilder(Client::class)
                            ->disableProxyingToOriginalMethods()
@@ -70,12 +63,10 @@ class OAuthClientTest extends TestCase
 
         $this->client = new OAuthClient($this->config, $this->http, $this->cachePool);
 
-        $this->request = $this->getMockBuilder(Request::class)
-                              ->getMock();
+        $this->request = $this->createMock(Request::class);
 
         $this->cacheItem = $this->getMockBuilder(CacheItemInterface::class)
                                 ->getMock();
-
 
         putenv('sumup_endpoint=https://api-theta.sam-app.ro');
     }
