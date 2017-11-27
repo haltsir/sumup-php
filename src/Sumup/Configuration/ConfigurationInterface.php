@@ -10,4 +10,5 @@ interface ConfigurationInterface
     public function setApiVersion(string $apiVersion);
     public function getGrantType();
     public function setGrantType(string $grantType);
+    public function getFullEndpoint();
 }

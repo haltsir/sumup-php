@@ -85,18 +85,18 @@ class Request
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getQuery(): ?array
+    public function getQuery(): ?string
     {
-        return $this->query;
+        return http_build_query($this->query);
     }
 
     /**
-     * @param array $query
+     * @param string|array $query
      * @return $this
      */
-    public function setQuery(array $query)
+    public function setQuery($query)
     {
         $this->query = $query;
 

@@ -9,14 +9,17 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
+use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\Model\Merchant\Profile;
+use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Service\Account\PersonalProfileService;
+use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 
@@ -62,6 +65,10 @@ class SumupContainer extends Container implements ContainerInterface
                                                          $container['cache.pool']);
         });
 
+        $this['collection'] = $this->factory(function () {
+            return new Repository\Collection();
+        });
+
         /* Account */
         $this['account.model'] = $this->factory(function () {
             return new Account();
@@ -90,6 +97,18 @@ class SumupContainer extends Container implements ContainerInterface
                                               $container['configuration'], $container['oauth.client']);
         });
 
+        /* Shelves */
+        $this['shelf.model'] = $this->factory(function () {
+            return new Shelf;
+        });
+        $this['shelf.factory'] = $this->factory(function($container) {
+            return new ShelfFactory($container['shelf.model'], $container['collection']);
+        });
+        $this['shelf.service'] = $this->factory(function ($container) {
+            return new ShelfService($container['configuration'], $container['oauth.client'],
+                                    $container['http.request'], $container['validator.allowed_arguments'],
+                                    $container['collection'], $container['shelf.factory']);
+        });
     }
 
     /**
