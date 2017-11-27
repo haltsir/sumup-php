@@ -2,8 +2,12 @@
 
 namespace Sumup\Api\Model\Product;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class Shelf
 {
+    use HydratorTrait;
+
     /**
      * @var int
      */

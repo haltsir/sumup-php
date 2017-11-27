@@ -4,7 +4,7 @@ namespace Sumup\Api\Service\Merchant;
 
 use Sumup\Api\Service\SumupService;
 
-class MerchantShelfService extends SumupService
+class ShelfProductPriceService extends SumupService
 {
     public function all()
     {
