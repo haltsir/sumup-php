@@ -101,13 +101,14 @@ class SumupContainer extends Container implements ContainerInterface
         $this['shelf.model'] = $this->factory(function () {
             return new Shelf;
         });
-        $this['shelf.factory'] = $this->factory(function($container) {
+        $this['shelf.factory'] = $this->factory(function ($container) {
             return new ShelfFactory($container['shelf.model'], $container['collection']);
         });
         $this['shelf.service'] = $this->factory(function ($container) {
             return new ShelfService($container['configuration'], $container['oauth.client'],
                                     $container['http.request'], $container['validator.allowed_arguments'],
-                                    $container['collection'], $container['shelf.factory']);
+                                    $container['validator.required_arguments'], $container['collection'],
+                                    $container['shelf.factory']);
         });
     }
 

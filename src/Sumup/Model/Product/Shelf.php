@@ -3,10 +3,11 @@
 namespace Sumup\Api\Model\Product;
 
 use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
 class Shelf
 {
-    use HydratorTrait;
+    use HydratorTrait, SerializerTrait;
 
     /**
      * @var int

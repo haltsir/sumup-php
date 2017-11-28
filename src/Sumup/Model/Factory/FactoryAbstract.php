@@ -9,24 +9,35 @@ class FactoryAbstract implements FactoryInterface
     /**
      * @var
      */
-    private $model;
+    protected $model;
 
     /**
      * @var
      */
-    private $collection;
+    protected $collection;
 
+    /**
+     * Create new model.
+     *
+     * @return mixed
+     */
     public function create()
     {
         return clone $this->model;
     }
 
+    /**
+     * Create and hydrate multiple entities.
+     *
+     * @param array $data
+     * @return Collection
+     */
     public function collect(array $data)
     {
         /** @var Collection $collection */
         $collection = clone $this->collection;
-        foreach ($data as $item) {
-            $collection->attach($this->create()->hydrate($item));
+        foreach ($data as $key => $item) {
+            $collection[$key] = $this->create()->hydrate($item);
         }
 
         return $collection;
