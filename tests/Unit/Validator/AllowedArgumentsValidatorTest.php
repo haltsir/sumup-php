@@ -9,7 +9,7 @@ class AllowedArgumentsValidatorTest extends TestCase
 {
     public function testValidArguments()
     {
-        $testFrom = ['testKey' => 'value'];
+        $testFrom = ['testKey'];
         $testAgainst = ['testKey', 'anotherTestKey'];
 
         $this->assertTrue(AllowedArgumentsValidator::validate($testFrom, $testAgainst));
@@ -17,14 +17,14 @@ class AllowedArgumentsValidatorTest extends TestCase
 
     public function testInvalidArguments()
     {
-        $testFrom = ['testKey' => 'value'];
+        $testFrom = ['testKey'];
         $testAgainst = ['anotherTestKey', 'dummyTestKey'];
         $this->assertFalse(AllowedArgumentsValidator::validate($testFrom, $testAgainst));
 
-        $testFrom += ['anotherTestKey' => 'value'];
+        $testFrom += ['anotherTestKey'];
         $this->assertFalse(AllowedArgumentsValidator::validate($testFrom, $testAgainst));
 
-        unset($testFrom['testKey']);
+        array_shift($testFrom);
         $this->assertTrue(AllowedArgumentsValidator::validate($testFrom, $testAgainst));
     }
 }
