@@ -6,6 +6,6 @@ class AllowedArgumentsValidator
 {
     public static function validate(array $inputArguments, array $allowedArguments)
     {
-        return !sizeof(array_diff(array_keys($inputArguments), $allowedArguments));
+        return !sizeof(array_diff(array_values($inputArguments), $allowedArguments));
     }
 }
