@@ -6,6 +6,6 @@ class RequiredArgumentsValidator
 {
     public static function validate($inputArguments, $requiredArguments)
     {
-        return !sizeof(array_diff($requiredArguments, array_keys($inputArguments)));
+        return 0 === sizeof(array_diff($requiredArguments, array_keys($inputArguments)));
     }
 }
