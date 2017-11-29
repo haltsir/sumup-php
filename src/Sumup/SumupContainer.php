@@ -9,16 +9,19 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
+use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\Model\Merchant\Profile;
+use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Service\Account\PersonalProfileService;
+use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
@@ -109,6 +112,20 @@ class SumupContainer extends Container implements ContainerInterface
                                     $container['http.request'], $container['validator.allowed_arguments'],
                                     $container['validator.required_arguments'], $container['collection'],
                                     $container['shelf.factory']);
+        });
+
+        /* Product */
+        $this['product.model'] = $this->factory(function () {
+            return new Product();
+        });
+        $this['product.factory'] = $this->factory(function ($container) {
+            return new ProductFactory($container['product.model'], $container['collection']);
+        });
+        $this['product.service'] = $this->factory(function ($container) {
+            return new ProductService($container['configuration'], $container['oauth.client'],
+                                      $container['http.request'], $container['validator.allowed_arguments'],
+                                      $container['validator.required_arguments'], $container['collection'],
+                                      $container['product.factory']);
         });
     }
 

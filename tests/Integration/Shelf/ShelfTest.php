@@ -5,6 +5,8 @@ namespace Integration\Shelf;
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
+use Sumup\Api\Exception\SumupClientException;
+use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Service\Merchant\ShelfService;
@@ -12,8 +14,25 @@ use Sumup\Api\SumupClient;
 
 class ShelfTest extends TestCase
 {
-    private $configuration;
-    private $toDelete = [];
+    /**
+     * @var SumupClient
+     */
+    protected $client;
+
+    /**
+     * @var Configuration
+     */
+    protected $configuration;
+
+    /**
+     * @var ShelfService
+     */
+    protected $shelfService;
+
+    /**
+     * @var array
+     */
+    protected $toDelete = [];
 
     public function setUp()
     {
@@ -24,42 +43,37 @@ class ShelfTest extends TestCase
         $this->configuration->setPassword(getenv('SUMUP_TEST_PASSWORD'));
         $this->configuration->setClientId(getenv('SUMUP_TEST_CLIENT_ID'));
         $this->configuration->setApiEndpoint(getenv('SUMUP_TEST_ENDPOINT'));
+
+        try {
+            $this->client = new SumupClient($this->configuration);
+            $this->shelfService = $this->client->createService('shelf');
+        } catch (SumupClientException $clientException) {
+            $this->fail($clientException->getMessage());
+        }
     }
 
     public function testListShelves()
     {
-        $client = new SumupClient($this->configuration);
-        /** @var ShelfService $shelfService */
-        $shelfService = $client->createService('shelf');
-
-        $shelves = $shelfService->all();
+        $shelves = $this->shelfService->all();
         $this->assertInstanceOf(Collection::class, $shelves);
     }
 
     public function testGetShelf()
     {
-        $client = new SumupClient($this->configuration);
-        /** @var ShelfService $shelfService */
-        $shelfService = $client->createService('shelf');
-
-        $shelves = $shelfService->all()
-                                ->all();
+        $shelves = $this->shelfService->all()
+                                      ->all();
         $shelf = array_shift($shelves);
         $this->assertInstanceOf(Shelf::class, $shelf);
 
-        $shelves = $shelfService->all(['products'])
-                                ->all();
+        $shelves = $this->shelfService->all(['products'])
+                                      ->all();
         $shelf = array_shift($shelves);
         $this->assertObjectHasAttribute('products', $shelf);
     }
 
     public function testCreateShelf()
     {
-        $client = new SumupClient($this->configuration);
-        /** @var ShelfService $shelfService */
-        $shelfService = $client->createService('shelf');
-
-        $shelf = $shelfService->create(['name' => 'test shelf']);
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
         $this->assertInstanceOf(Shelf::class, $shelf);
         $this->assertAttributeGreaterThan(0, 'id', $shelf);
 
@@ -68,16 +82,12 @@ class ShelfTest extends TestCase
 
     public function testUpdateShelf()
     {
-        $client = new SumupClient($this->configuration);
-        /** @var ShelfService $shelfService */
-        $shelfService = $client->createService('shelf');
-
-        $createdShelf = $shelfService->create(['name' => 'test shelf']);
-        $success = $shelfService->update($createdShelf->id, ['name' => 'updated test shelf']);
+        $createdShelf = $this->shelfService->create(['name' => 'test shelf']);
+        $success = $this->shelfService->update($createdShelf->id, ['name' => 'updated test shelf']);
 
         $this->assertTrue($success);
 
-        $fetchedShelf = $shelfService->get($createdShelf->id);
+        $fetchedShelf = $this->shelfService->get($createdShelf->id);
         $this->assertEquals('updated test shelf', $fetchedShelf->name);
 
         $this->toDelete[] = $createdShelf;
@@ -85,20 +95,17 @@ class ShelfTest extends TestCase
 
     public function testDeleteShelf()
     {
-        $client = new SumupClient($this->configuration);
-        /** @var ShelfService $shelfService */
-        $shelfService = $client->createService('shelf');
-        $shelf = $shelfService->create(['name' => 'test shelf']);
-        $this->assertTrue($shelfService->delete($shelf->id));
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
+        $this->assertTrue($this->shelfService->delete($shelf->id));
+
+        $this->expectException(RequestException::class);
+        $this->shelfService->get($shelf->id);
     }
 
     public function tearDown()
     {
-        $client = new SumupClient($this->configuration);
-        /** @var ShelfService $shelfService */
-        $shelfService = $client->createService('shelf');
         foreach ($this->toDelete as $shelf) {
-            $shelfService->delete($shelf->id);
+            $this->shelfService->delete($shelf->id);
         }
     }
 }
