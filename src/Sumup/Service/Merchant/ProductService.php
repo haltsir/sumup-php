@@ -6,19 +6,16 @@ use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\ConfigurationInterface;
 use Sumup\Api\Http\Exception\RequestException;
+use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Http\Request;
-use Sumup\Api\Model\Factory\ShelfFactory;
+use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
-use Sumup\Api\Service\Exception\InvalidArgumentException;
 use Sumup\Api\Service\SumupService;
-use Sumup\Api\Validator\AllowedArgumentsValidator;
-use Sumup\Api\Validator\RequiredArgumentsValidator;
 
-class ShelfService extends SumupService
+class ProductService extends SumupService
 {
-    const ALLOWED_OPTIONS = ['products'];
-    const REQUIRED_DATA = ['name'];
+    const REQUIRED_DATA = ['title'];
 
     /**
      * @var ConfigurationInterface
@@ -36,12 +33,12 @@ class ShelfService extends SumupService
     protected $request;
 
     /**
-     * @var AllowedArgumentsValidator
+     * @var string
      */
     protected $allowedArgumentsValidator;
 
     /**
-     * @var RequiredArgumentsValidator
+     * @var string
      */
     protected $requiredArgumentsValidator;
 
@@ -51,9 +48,9 @@ class ShelfService extends SumupService
     protected $collection;
 
     /**
-     * @var ShelfFactory
+     * @var ProductFactory
      */
-    protected $shelfFactory;
+    protected $productFactory;
 
     public function __construct(
         ConfigurationInterface $configuration,
@@ -62,7 +59,7 @@ class ShelfService extends SumupService
         $allowedArgumentsValidator,
         $requiredArgumentsValidator,
         Collection $collection,
-        ShelfFactory $shelfFactory)
+        ProductFactory $productFactory)
     {
         $this->configuration = $configuration;
         $this->client = $client;
@@ -70,69 +67,24 @@ class ShelfService extends SumupService
         $this->allowedArgumentsValidator = $allowedArgumentsValidator;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
         $this->collection = $collection;
-        $this->shelfFactory = $shelfFactory;
+        $this->productFactory = $productFactory;
     }
 
     /**
-     * Get all shelves.
-     *
-     * @param array $options
+     * @param $shelfId
      * @return Collection
-     * @throws InvalidArgumentException
      * @throws RequestException
      * @throws \Exception
      */
-    public function all(array $options = [])
+    public function all($shelfId)
     {
-        if (false === $this->allowedArgumentsValidator::validate($options, self::ALLOWED_OPTIONS)) {
-            throw new InvalidArgumentException('Invalid arguments provided to ' . __CLASS__ . '.');
-        }
-
-        $request = $this->request->setMethod('GET')
-                                 ->setUri($this->configuration->getFullEndpoint() . '/me/merchant-profile/shelves');
-
-        if (sizeof($options) > 0) {
-            $request->setQuery(implode('include[]=', $options));
-        }
-
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
-
-        return $this->shelfFactory->collect(json_decode((string)$response->getBody(), true));
-    }
-
-    /**
-     * Get a single shelf.
-     *
-     * @param $id
-     * @param array $options
-     * @return mixed
-     * @throws InvalidArgumentException
-     * @throws RequestException
-     * @throws \Exception
-     */
-    public function get($id, array $options = [])
-    {
-        if (false === $this->allowedArgumentsValidator::validate($options, self::ALLOWED_OPTIONS)) {
-            throw new InvalidArgumentException('Invalid arguments provided to ' . __CLASS__ . '.');
-        }
-
         $request = $this->request->setMethod('GET')
                                  ->setUri(
                                      $this->configuration->getFullEndpoint()
                                      . '/me/merchant-profile/shelves/'
-                                     . (int)$id
+                                     . (int)$shelfId
+                                     . '/products'
                                  );
-
-        if (sizeof($options) > 0) {
-            $request->setQuery(implode('include[]=', $options));
-        }
 
         try {
             /** @var ResponseInterface $response */
@@ -143,28 +95,62 @@ class ShelfService extends SumupService
             throw new RequestException($content->message);
         }
 
-        $shelf = $this->shelfFactory->create();
-
-        return $shelf->hydrate(json_decode((string)$response->getBody(), true));
+        return $this->productFactory->collect(json_decode((string)$response->getBody(), true));
     }
 
     /**
-     * Create a shelf.
-     *
-     * @param array $data
+     * @param $shelfId
+     * @param $productId
      * @return mixed
-     * @throws InvalidArgumentException
      * @throws RequestException
      * @throws \Exception
      */
-    public function create(array $data)
+    public function get($shelfId, $productId)
+    {
+        $request = $this->request->setMethod('GET')
+                                 ->setUri(
+                                     $this->configuration->getFullEndpoint()
+                                     . '/me/merchant-profile/shelves/'
+                                     . (int)$shelfId
+                                     . '/products/'
+                                     . (int)$productId
+                                 );
+
+        try {
+            /** @var ResponseInterface $response */
+            $response = $this->client->request($request);
+        } catch (ClientException $clientException) {
+            $response = $clientException->getResponse();
+            $content = json_decode((string)$response->getBody());
+            throw new RequestException($content->message);
+        }
+
+        $product = $this->productFactory->create();
+
+        return $product->hydrate(json_decode((string)$response->getBody(), true));
+    }
+
+    /**
+     * @param $shelfId
+     * @param $data
+     * @return mixed
+     * @throws RequestException
+     * @throws RequiredArgumentException
+     * @throws \Exception
+     */
+    public function create($shelfId, $data)
     {
         if (false === $this->requiredArgumentsValidator::validate($data, self::REQUIRED_DATA)) {
-            throw new InvalidArgumentException('Missing required data provided to ' . __CLASS__);
+            throw new RequiredArgumentException('Missing required data provided to ' . __CLASS__);
         }
 
         $request = $this->request->setMethod('POST')
-                                 ->setUri($this->configuration->getFullEndpoint() . '/me/merchant-profile/shelves')
+                                 ->setUri(
+                                     $this->configuration->getFullEndpoint()
+                                     . '/me/merchant-profile/shelves/'
+                                     . (int)$shelfId
+                                     . '/products'
+                                 )
                                  ->setBody($data);
 
         try {
@@ -176,32 +162,28 @@ class ShelfService extends SumupService
             throw new RequestException($content->message);
         }
 
-        $shelf = $this->shelfFactory->create();
+        $product = $this->productFactory->create();
 
-        return $shelf->hydrate(json_decode((string)$response->getBody(), true));
+        return $product->hydrate(json_decode((string)$response->getBody(), true));
     }
 
     /**
-     * Update a shelf.
-     *
-     * @param $id
+     * @param $shelfId
+     * @param $productId
      * @param array $data
      * @return bool
-     * @throws InvalidArgumentException
      * @throws RequestException
      * @throws \Exception
      */
-    public function update($id, array $data)
+    public function update($shelfId, $productId, $data = [])
     {
-        if (0 !== $id && empty($id)) {
-            throw new InvalidArgumentException('Provide a valid id to ' . __CLASS__);
-        }
-
         $request = $this->request->setMethod('PUT')
                                  ->setUri(
                                      $this->configuration->getFullEndpoint()
                                      . '/me/merchant-profile/shelves/'
-                                     . (int)$id
+                                     . (int)$shelfId
+                                     . '/products/'
+                                     . (int)$productId
                                  )
                                  ->setBody($data);
 
@@ -218,21 +200,23 @@ class ShelfService extends SumupService
     }
 
     /**
-     * Delete shelf.
-     *
-     * @param $id
+     * @param $shelfId
+     * @param $productId
      * @return bool
      * @throws RequestException
      * @throws \Exception
      */
-    public function delete($id)
+    public function delete($shelfId, $productId)
     {
         $request = $this->request->setMethod('DELETE')
                                  ->setUri(
                                      $this->configuration->getFullEndpoint()
                                      . '/me/merchant-profile/shelves/'
-                                     . (int)$id
+                                     . (int)$shelfId
+                                     . '/products/'
+                                     . (int)$productId
                                  );
+
         try {
             /** @var ResponseInterface $response */
             $response = $this->client->request($request);
