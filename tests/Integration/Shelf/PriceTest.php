@@ -7,13 +7,14 @@ use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
 use Sumup\Api\Http\Exception\RequestException;
-use Sumup\Api\Model\Product\Product;
+use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Repository\Collection;
+use Sumup\Api\Service\Merchant\PriceService;
 use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\SumupClient;
 
-class ProductTest extends TestCase
+class PriceTest extends TestCase
 {
     /**
      * @var Configuration
@@ -36,6 +37,11 @@ class ProductTest extends TestCase
     protected $shelfService;
 
     /**
+     * @var PriceService
+     */
+    protected $priceService;
+
+    /**
      * @var array
      */
     protected $toDelete = [];
@@ -54,62 +60,71 @@ class ProductTest extends TestCase
             $this->client = new SumupClient($this->configuration);
             $this->shelfService = $this->client->createService('shelf');
             $this->productService = $this->client->createService('product');
+            $this->priceService = $this->client->createService('price');
         } catch (SumupClientException $clientException) {
             $this->fail($clientException->getMessage());
         }
     }
 
-    public function testCreateProduct()
-    {
-        $shelf = $this->shelfService->create(['name' => 'test shelf']);
-        $product = $this->productService->create($shelf->id, ['title' => 'test product']);
-        $this->assertInstanceOf(Product::class, $product);
-        $this->assertGreaterThan(0, $product->id);
-        $this->assertGreaterThan(0, $product->shelfId);
-        $this->assertEquals('test product', $product->title);
-
-        $this->toDelete[] = $shelf;
-    }
-
-    public function testListProducts()
-    {
-        $shelf = $this->shelfService->create(['name' => 'test shelf']);
-        $this->toDelete[] = $shelf;
-
-        $this->productService->create($shelf->id, ['title' => 'test product']);
-
-        $products = $this->productService->all($shelf->id);
-        $this->assertInstanceOf(Collection::class, $products);
-        $this->assertEquals(1, $products->count());
-
-        $arrayedProducts = $products->all();
-        $product = array_shift($arrayedProducts);
-
-        $this->assertInstanceOf(Product::class, $product);
-    }
-
-    public function testGetProduct()
+    public function testCreatePrice()
     {
         $shelf = $this->shelfService->create(['name' => 'test shelf']);
         $this->toDelete[] = $shelf;
 
         $product = $this->productService->create($shelf->id, ['title' => 'test product']);
-        $fetchedProduct = $this->productService->get($shelf->id, $product->id);
-        $this->assertInstanceOf(Product::class, $fetchedProduct);
-        $this->assertGreaterThan(0, $fetchedProduct->id);
-        $this->assertGreaterThan(0, $fetchedProduct->shelfId);
-        $this->assertEquals('test product', $fetchedProduct->title);
+        $price = $this->priceService->create($shelf->id, $product->id, ['net' => 1, 'description' => 'test price']);
+
+        $this->assertInstanceOf(Price::class, $price);
+        $this->assertGreaterThan(0, $price->id);
+        $this->assertGreaterThan(0, $price->productId);
+        $this->assertEquals('test price', $price->description);
     }
 
-    public function testUpdateProduct()
+    public function testListPrices()
     {
         $shelf = $this->shelfService->create(['name' => 'test shelf']);
         $this->toDelete[] = $shelf;
 
         $product = $this->productService->create($shelf->id, ['title' => 'test product']);
-        $this->productService->update($shelf->id, $product->id, ['title' => 'updated test product']);
-        $fetchedProduct = $this->productService->get($shelf->id, $product->id);
-        $this->assertEquals('updated test product', $fetchedProduct->title);
+        $this->priceService->create($shelf->id, $product->id, ['net' => 1]);
+
+        $prices = $this->priceService->all($shelf->id, $product->id);
+        $this->assertInstanceOf(Collection::class, $prices);
+        $this->assertEquals(1, $prices->count());
+
+        $arrayedPrices = $prices->all();
+        $price = array_shift($arrayedPrices);
+
+        $this->assertInstanceOf(Price::class, $price);
+    }
+
+    public function testGetPrice()
+    {
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
+        $this->toDelete[] = $shelf;
+
+        $product = $this->productService->create($shelf->id, ['title' => 'test product']);
+        $price = $this->priceService->create($shelf->id, $product->id, ['net' => 1, 'description' => 'test price']);
+        $fetchedPrice = $this->priceService->get($shelf->id, $product->id, $price->id);
+        $this->assertInstanceOf(Price::class, $fetchedPrice);
+        $this->assertGreaterThan(0, $fetchedPrice->id);
+        $this->assertGreaterThan(0, $fetchedPrice->productId);
+        $this->assertEquals('test price', $fetchedPrice->description);
+    }
+
+    public function testUpdatePrice()
+    {
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
+        $this->toDelete[] = $shelf;
+
+        $product = $this->productService->create($shelf->id, ['title' => 'test product']);
+        $price = $this->priceService->create($shelf->id, $product->id, ['net' => 1, 'description' => 'test price']);
+        $this->assertTrue($this->priceService->update($shelf->id, $product->id, $price->id,
+                                                      ['net' => 2, 'description' => 'updated test price']));
+
+        $fetchedPrice = $this->priceService->get($shelf->id, $product->id, $price->id);
+        $this->assertEquals(2, $fetchedPrice->net);
+        $this->assertEquals('updated test price', $fetchedPrice->description);
     }
 
     public function testDeleteProduct()
@@ -118,10 +133,11 @@ class ProductTest extends TestCase
         $this->toDelete[] = $shelf;
 
         $product = $this->productService->create($shelf->id, ['title' => 'test product']);
-        $this->assertTrue($this->productService->delete($shelf->id, $product->id));
+        $price = $this->priceService->create($shelf->id, $product->id, ['net' => 1]);
+        $this->assertTrue($this->priceService->delete($shelf->id, $product->id, $price->id));
 
         $this->expectException(RequestException::class);
-        $this->productService->get($shelf->id, $product->id);
+        $this->priceService->get($shelf->id, $product->id, $price->id);
     }
 
     public function tearDown()

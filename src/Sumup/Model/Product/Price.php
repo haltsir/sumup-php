@@ -2,8 +2,17 @@
 
 namespace Sumup\Api\Model\Product;
 
-class ProductPrice
+use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
+
+class Price
 {
+    use HydratorTrait, SerializerTrait;
+
+    const MAP_JSON_TO_ENTITY = [
+        'productId' => ['path' => 'product_id']
+    ];
+
     /**
      * @var int
      */
