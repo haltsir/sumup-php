@@ -8,14 +8,14 @@ use Sumup\Api\Configuration\ConfigurationInterface;
 use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Http\Request;
-use Sumup\Api\Model\Factory\ProductFactory;
+use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
 use Sumup\Api\Service\SumupService;
 
-class ProductService extends SumupService
+class PriceService extends SumupService
 {
-    const REQUIRED_DATA = ['title'];
+    const REQUIRED_DATA = ['net'];
 
     /**
      * @var ConfigurationInterface
@@ -43,9 +43,9 @@ class ProductService extends SumupService
     protected $collection;
 
     /**
-     * @var ProductFactory
+     * @var PriceFactory
      */
-    protected $productFactory;
+    protected $priceFactory;
 
     public function __construct(
         ConfigurationInterface $configuration,
@@ -53,51 +53,23 @@ class ProductService extends SumupService
         Request $request,
         string $requiredArgumentsValidator,
         Collection $collection,
-        ProductFactory $productFactory)
+        PriceFactory $priceFactory)
     {
         $this->configuration = $configuration;
         $this->client = $client;
         $this->request = $request;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
         $this->collection = $collection;
-        $this->productFactory = $productFactory;
-    }
-
-    /**
-     * @param $shelfId
-     * @return Collection
-     * @throws RequestException
-     */
-    public function all($shelfId)
-    {
-        $request = $this->request->setMethod('GET')
-                                 ->setUri(
-                                     $this->configuration->getFullEndpoint()
-                                     . '/me/merchant-profile/shelves/'
-                                     . (int)$shelfId
-                                     . '/products'
-                                 );
-
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
-
-        return $this->productFactory->collect(json_decode((string)$response->getBody(), true));
+        $this->priceFactory = $priceFactory;
     }
 
     /**
      * @param $shelfId
      * @param $productId
-     * @return mixed
+     * @return Collection
      * @throws RequestException
-     * @throws \Exception
      */
-    public function get($shelfId, $productId)
+    public function all($shelfId, $productId)
     {
         $request = $this->request->setMethod('GET')
                                  ->setUri(
@@ -106,6 +78,38 @@ class ProductService extends SumupService
                                      . (int)$shelfId
                                      . '/products/'
                                      . (int)$productId
+                                     . '/prices'
+                                 );
+        try {
+            /** @var ResponseInterface $response */
+            $response = $this->client->request($request);
+        } catch (ClientException $clientException) {
+            $response = $clientException->getResponse();
+            $content = json_decode((string)$response->getBody());
+            throw new RequestException($content->message);
+        }
+
+        return $this->priceFactory->collect(json_decode((string)$response->getBody(), true));
+    }
+
+    /**
+     * @param $shelfId
+     * @param $productId
+     * @param $priceId
+     * @return mixed
+     * @throws RequestException
+     */
+    public function get($shelfId, $productId, $priceId)
+    {
+        $request = $this->request->setMethod('GET')
+                                 ->setUri(
+                                     $this->configuration->getFullEndpoint()
+                                     . '/me/merchant-profile/shelves/'
+                                     . (int)$shelfId
+                                     . '/products/'
+                                     . (int)$productId
+                                     . '/prices/'
+                                     . (int)$priceId
                                  );
 
         try {
@@ -117,20 +121,20 @@ class ProductService extends SumupService
             throw new RequestException($content->message);
         }
 
-        $product = $this->productFactory->create();
+        $price = $this->priceFactory->create();
 
-        return $product->hydrate(json_decode((string)$response->getBody(), true));
+        return $price->hydrate(json_decode((string)$response->getBody(), true));
     }
 
     /**
      * @param $shelfId
+     * @param $productId
      * @param $data
      * @return mixed
      * @throws RequestException
      * @throws RequiredArgumentException
-     * @throws \Exception
      */
-    public function create($shelfId, $data)
+    public function create($shelfId, $productId, $data)
     {
         if (false === $this->requiredArgumentsValidator::validate($data, self::REQUIRED_DATA)) {
             throw new RequiredArgumentException('Missing required data provided to ' . __CLASS__);
@@ -141,7 +145,9 @@ class ProductService extends SumupService
                                      $this->configuration->getFullEndpoint()
                                      . '/me/merchant-profile/shelves/'
                                      . (int)$shelfId
-                                     . '/products'
+                                     . '/products/'
+                                     . (int)$productId
+                                     . '/prices'
                                  )
                                  ->setBody($data);
 
@@ -154,20 +160,20 @@ class ProductService extends SumupService
             throw new RequestException($content->message);
         }
 
-        $product = $this->productFactory->create();
+        $price = $this->priceFactory->create();
 
-        return $product->hydrate(json_decode((string)$response->getBody(), true));
+        return $price->hydrate(json_decode((string)$response->getBody(), true));
     }
 
     /**
      * @param $shelfId
      * @param $productId
+     * @param $priceId
      * @param array $data
      * @return bool
      * @throws RequestException
-     * @throws \Exception
      */
-    public function update($shelfId, $productId, $data = [])
+    public function update($shelfId, $productId, $priceId, $data = [])
     {
         $request = $this->request->setMethod('PUT')
                                  ->setUri(
@@ -176,6 +182,8 @@ class ProductService extends SumupService
                                      . (int)$shelfId
                                      . '/products/'
                                      . (int)$productId
+                                     . '/prices/'
+                                     . (int)$priceId
                                  )
                                  ->setBody($data);
 
@@ -194,11 +202,11 @@ class ProductService extends SumupService
     /**
      * @param $shelfId
      * @param $productId
+     * @param $priceId
      * @return bool
      * @throws RequestException
-     * @throws \Exception
      */
-    public function delete($shelfId, $productId)
+    public function delete($shelfId, $productId, $priceId)
     {
         $request = $this->request->setMethod('DELETE')
                                  ->setUri(
@@ -207,6 +215,8 @@ class ProductService extends SumupService
                                      . (int)$shelfId
                                      . '/products/'
                                      . (int)$productId
+                                     . '/prices/'
+                                     . (int)$priceId
                                  );
 
         try {

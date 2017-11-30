@@ -9,18 +9,21 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
+use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\Model\Merchant\Profile;
+use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Service\Account\PersonalProfileService;
+use Sumup\Api\Service\Merchant\PriceService;
 use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
@@ -123,9 +126,21 @@ class SumupContainer extends Container implements ContainerInterface
         });
         $this['product.service'] = $this->factory(function ($container) {
             return new ProductService($container['configuration'], $container['oauth.client'],
-                                      $container['http.request'], $container['validator.allowed_arguments'],
-                                      $container['validator.required_arguments'], $container['collection'],
-                                      $container['product.factory']);
+                                      $container['http.request'], $container['validator.required_arguments'],
+                                      $container['collection'], $container['product.factory']);
+        });
+
+        /* Price */
+        $this['price.model'] = $this->factory(function () {
+            return new Price();
+        });
+        $this['price.factory'] = $this->factory(function ($container) {
+            return new PriceFactory($container['price.model'], $container['collection']);
+        });
+        $this['price.service'] = $this->factory(function ($container) {
+            return new PriceService($container['configuration'], $container['oauth.client'],
+                                    $container['http.request'], $container['validator.required_arguments'],
+                                    $container['collection'], $container['price.factory']);
         });
     }
 
