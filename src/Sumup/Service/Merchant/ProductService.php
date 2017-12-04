@@ -66,7 +66,6 @@ class ProductService extends SumupService
     /**
      * @param $shelfId
      * @return Collection
-     * @throws RequestException
      */
     public function all($shelfId)
     {
@@ -78,14 +77,8 @@ class ProductService extends SumupService
                                      . '/products'
                                  );
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return $this->productFactory->collect(json_decode((string)$response->getBody(), true));
     }
@@ -94,8 +87,6 @@ class ProductService extends SumupService
      * @param $shelfId
      * @param $productId
      * @return mixed
-     * @throws RequestException
-     * @throws \Exception
      */
     public function get($shelfId, $productId)
     {
@@ -108,14 +99,8 @@ class ProductService extends SumupService
                                      . (int)$productId
                                  );
 
-        try {
             /** @var ResponseInterface $response */
             $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
 
         $product = $this->productFactory->create();
 
@@ -126,9 +111,7 @@ class ProductService extends SumupService
      * @param $shelfId
      * @param $data
      * @return mixed
-     * @throws RequestException
      * @throws RequiredArgumentException
-     * @throws \Exception
      */
     public function create($shelfId, $data)
     {
@@ -145,14 +128,8 @@ class ProductService extends SumupService
                                  )
                                  ->setBody($data);
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         $product = $this->productFactory->create();
 
@@ -164,8 +141,6 @@ class ProductService extends SumupService
      * @param $productId
      * @param array $data
      * @return bool
-     * @throws RequestException
-     * @throws \Exception
      */
     public function update($shelfId, $productId, $data = [])
     {
@@ -179,14 +154,8 @@ class ProductService extends SumupService
                                  )
                                  ->setBody($data);
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return ($response->getStatusCode() === 204);
     }
@@ -195,8 +164,6 @@ class ProductService extends SumupService
      * @param $shelfId
      * @param $productId
      * @return bool
-     * @throws RequestException
-     * @throws \Exception
      */
     public function delete($shelfId, $productId)
     {
@@ -209,14 +176,8 @@ class ProductService extends SumupService
                                      . (int)$productId
                                  );
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return ($response->getStatusCode() === 204);
     }

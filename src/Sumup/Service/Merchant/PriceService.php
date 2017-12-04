@@ -67,7 +67,6 @@ class PriceService extends SumupService
      * @param $shelfId
      * @param $productId
      * @return Collection
-     * @throws RequestException
      */
     public function all($shelfId, $productId)
     {
@@ -80,14 +79,10 @@ class PriceService extends SumupService
                                      . (int)$productId
                                      . '/prices'
                                  );
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
+
 
         return $this->priceFactory->collect(json_decode((string)$response->getBody(), true));
     }
@@ -97,7 +92,6 @@ class PriceService extends SumupService
      * @param $productId
      * @param $priceId
      * @return mixed
-     * @throws RequestException
      */
     public function get($shelfId, $productId, $priceId)
     {
@@ -112,14 +106,8 @@ class PriceService extends SumupService
                                      . (int)$priceId
                                  );
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         $price = $this->priceFactory->create();
 
@@ -131,7 +119,6 @@ class PriceService extends SumupService
      * @param $productId
      * @param $data
      * @return mixed
-     * @throws RequestException
      * @throws RequiredArgumentException
      */
     public function create($shelfId, $productId, $data)
@@ -151,14 +138,8 @@ class PriceService extends SumupService
                                  )
                                  ->setBody($data);
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         $price = $this->priceFactory->create();
 
@@ -171,7 +152,6 @@ class PriceService extends SumupService
      * @param $priceId
      * @param array $data
      * @return bool
-     * @throws RequestException
      */
     public function update($shelfId, $productId, $priceId, $data = [])
     {
@@ -187,14 +167,8 @@ class PriceService extends SumupService
                                  )
                                  ->setBody($data);
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return ($response->getStatusCode() === 204);
     }
@@ -204,7 +178,6 @@ class PriceService extends SumupService
      * @param $productId
      * @param $priceId
      * @return bool
-     * @throws RequestException
      */
     public function delete($shelfId, $productId, $priceId)
     {
@@ -219,14 +192,8 @@ class PriceService extends SumupService
                                      . (int)$priceId
                                  );
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return ($response->getStatusCode() === 204);
     }

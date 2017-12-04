@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
 use Sumup\Api\Http\Exception\RequestException;
+use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Service\Merchant\PriceService;
@@ -78,6 +79,19 @@ class PriceTest extends TestCase
         $this->assertGreaterThan(0, $price->id);
         $this->assertGreaterThan(0, $price->productId);
         $this->assertEquals('test price', $price->description);
+    }
+
+    public function testShouldThrowRequiredArgumentExceptionIfRequiredParamIsMissingOnCreatePrice()
+    {
+        $this->expectException(RequiredArgumentException::class);
+
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
+
+        $product = $this->productService->create($shelf->id, ['title' => 'test product']);
+        $this->priceService->create($shelf->id, $product->id, ['InvalidArgument']);
+
+
+        $this->toDelete[] = $shelf;
     }
 
     public function testListPrices()

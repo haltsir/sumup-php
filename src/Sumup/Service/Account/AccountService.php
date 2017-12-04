@@ -12,7 +12,7 @@ use Sumup\Api\Validator\AllowedArgumentsValidator;
 
 class AccountService extends SumupService
 {
-    const ALLOWED_ACCOUNT_OPTIONS = ['include'];
+    const ALLOWED_ACCOUNT_OPTIONS     = ['include'];
     const ALLOWED_SUBACCOUNTS_OPTIONS = ['include'];
 
     /**
@@ -72,7 +72,6 @@ class AccountService extends SumupService
         $request = $this->request->setMethod('GET')
                                  ->setUri($this->configuration->getFullEndpoint() . '/me')
                                  ->setQuery($options);
-
         /** @var ResponseInterface $response */
         $response = $this->client->request($request);
 
