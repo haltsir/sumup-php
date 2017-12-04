@@ -23,7 +23,7 @@ class RequestTest extends TestCase
     protected $client;
 
     /**
-     * @var @var PHPUnit_Framework_MockObject_MockObject| ClientException
+     * @var \PHPUnit_Framework_MockObject_MockObject | ClientException
      */
     protected $exception;
 

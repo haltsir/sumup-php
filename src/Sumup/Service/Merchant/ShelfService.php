@@ -78,7 +78,6 @@ class ShelfService extends SumupService
      * @param array $options
      * @return Collection
      * @throws InvalidArgumentException
-     * @throws \Exception
      */
     public function all(array $options = [])
     {
@@ -106,7 +105,6 @@ class ShelfService extends SumupService
      * @param array $options
      * @return mixed
      * @throws InvalidArgumentException
-     * @throws \Exception
      */
     public function get($id, array $options = [])
     {
@@ -139,7 +137,6 @@ class ShelfService extends SumupService
      * @param array $data
      * @return mixed
      * @throws InvalidArgumentException
-     * @throws \Exception
      */
     public function create(array $data)
     {
@@ -153,7 +150,7 @@ class ShelfService extends SumupService
 
         /** @var ResponseInterface $response */
         $response = $this->client->request($request);
-        
+
         $shelf = $this->shelfFactory->create();
 
         return $shelf->hydrate(json_decode((string)$response->getBody(), true));
@@ -166,7 +163,6 @@ class ShelfService extends SumupService
      * @param array $data
      * @return bool
      * @throws InvalidArgumentException
-     * @throws \Exception
      */
     public function update($id, array $data)
     {
@@ -193,7 +189,6 @@ class ShelfService extends SumupService
      *
      * @param $id
      * @return bool
-     * @throws \Exception
      */
     public function delete($id)
     {

@@ -66,7 +66,6 @@ class ProductService extends SumupService
     /**
      * @param $shelfId
      * @return Collection
-     * @throws \Exception
      */
     public function all($shelfId)
     {
@@ -88,8 +87,6 @@ class ProductService extends SumupService
      * @param $shelfId
      * @param $productId
      * @return mixed
-     * @throws RequestException
-     * @throws \Exception
      */
     public function get($shelfId, $productId)
     {
@@ -115,7 +112,6 @@ class ProductService extends SumupService
      * @param $data
      * @return mixed
      * @throws RequiredArgumentException
-     * @throws \Exception
      */
     public function create($shelfId, $data)
     {
@@ -145,7 +141,6 @@ class ProductService extends SumupService
      * @param $productId
      * @param array $data
      * @return bool
-     * @throws \Exception
      */
     public function update($shelfId, $productId, $data = [])
     {
@@ -169,7 +164,6 @@ class ProductService extends SumupService
      * @param $shelfId
      * @param $productId
      * @return bool
-     * @throws \Exception
      */
     public function delete($shelfId, $productId)
     {

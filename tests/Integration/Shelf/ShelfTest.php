@@ -16,7 +16,7 @@ use Sumup\Api\Service\Exception\InvalidArgumentException;
 class ShelfTest extends TestCase
 {
     /**
-     * @var @var PHPUnit_Framework_MockObject_MockObject | SumupClient
+     * @var \PHPUnit_Framework_MockObject_MockObject | SumupClient
      */
     protected $client;
 
