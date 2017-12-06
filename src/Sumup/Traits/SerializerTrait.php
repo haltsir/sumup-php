@@ -11,95 +11,90 @@ trait SerializerTrait
      */
     public function serialize()
     {
-        $map = defined('self::MAP_ENTITY_TO_JSON') ? self::MAP_ENTITY_TO_JSON : [];
+        if (false === defined('self::MAP_ENTITY_TO_JSON')) {
+            return $this;
+        }
 
-        return json_encode($this->rekeyBeforeSerialize(get_object_vars($this), $map));
+        return json_encode($this->serializeMap($this, self::MAP_ENTITY_TO_JSON));
     }
 
     /**
-     * Change data keys to API format. Map values.
+     * Serialize using a map.
      *
-     * @param array $data
+     * @param $object
      * @param array $map
      * @return array
      */
-    public function rekeyBeforeSerialize(array $data, array $map = [])
+    private function serializeMap($object, array $map = [])
     {
         $target = [];
 
-        if (sizeof($map) > 0) {
-            $target = $this->mapToSerialize($data);
-        }
-
-        foreach ($data as $key => $value) {
-            if (is_null($value)) {
+        foreach (array_keys(get_object_vars($object)) as $entityProperty) {
+            if (!array_key_exists($entityProperty, $map)) {
+                $key = camelCaseToSnakeCase($entityProperty);
+                $target[$key] = $object->$entityProperty;
                 continue;
             }
 
-            $newKey = camelCaseToSnakeCase($key);
-            if (is_object($value)) {
-                $value = get_object_vars($value);
+            $propertyMap = self::MAP_ENTITY_TO_JSON[$entityProperty];
+            $itemKey = $propertyMap['path'] ?? $entityProperty;
+            $itemType = $propertyMap['type'] ?? 'string';
+
+            if (false === strpos($itemKey, '.')) {
+                $target[$itemKey] =
+                    $this->serializeValue($itemType, $object->$entityProperty, $object, $entityProperty);
+                continue;
             }
 
-            $insideMap = $map[$key] ?? [];
-            $target[$newKey] = is_array($value) ? $this->rekeyBeforeSerialize($value, $insideMap) : $value;
+            $target[$itemKey] = [];
+            $variableBuilder =& $target[$itemKey];
+            foreach (explode('.', $itemKey) as $idx => $key) {
+                $variableBuilder[$key] = [];
+                $variableBuilder =& $variableBuilder[$key];
+            }
+
+            $variableBuilder = $this->serializeValue($itemType, $object->$entityProperty, $object, $entityProperty);
         }
 
         return $target;
     }
 
     /**
-     * Change data keys.
+     * Serialize object property value.
      *
-     * @param array $data
-     * @return array
-     */
-    private function mapToSerialize(array $data)
-    {
-        $target = [];
-        foreach (self::MAP_ENTITY_TO_JSON as $key => $map) {
-            $path = $map['path'] ?? $key;
-
-            if (false === strpos($key, '.')) {
-                $target[$path] = $data[$key];
-                continue;
-            }
-
-            $target[$path] = $this->resolveSerializationValue($key, $data);
-        }
-
-        return $target;
-    }
-
-    /**
-     * Resolve value by map key.
-     *
-     * @param string $key
-     * @param array $data
+     * @param $type
+     * @param $value
+     * @param $parentObject
+     * @param $parentProperty
      * @return mixed
      */
-    private function resolveSerializationValue(string $key, array $data)
+    private function serializeValue($type, $value, $parentObject, $parentProperty)
     {
-        if (isset($data[$key])) {
-            return $data[$key];
-        }
-
-        $keyParts = explode('.', $key);
-        $value = $data;
-        foreach ($keyParts as $part) {
-            if (is_object($value) && isset($value->$part)) {
-                $value = $value->$part;
-                continue;
-            }
-
-            if (is_array($value) && isset($value[$part])) {
-                $value = $value[$part];
-                continue;
-            }
-
-            return null;
+        if (class_exists($type) && is_object($parentObject->$parentProperty)) {
+            return $this->serializeValueByObject($type, $parentObject, $parentProperty);
         }
 
         return $value;
+    }
+
+    /**
+     * Serialize value of type object.
+     *
+     * @param $type
+     * @param $parentObject
+     * @param $parentProperty
+     * @return array
+     */
+    private function serializeValueByObject($type, $parentObject, $parentProperty)
+    {
+        $map = (defined($type . '::MAP_ENTITY_TO_JSON') ? $type . '::MAP_ENTITY_TO_JSON' : []);
+        $object = new $type;
+        foreach (array_keys(get_object_vars($parentObject->$parentProperty)) as $objectProperty) {
+            if (property_exists($object, $objectProperty)) {
+                $object->$objectProperty = $parentObject->$parentProperty->$objectProperty;
+            }
+        }
+
+        return $this->serializeMap($object, $map);
     }
 }

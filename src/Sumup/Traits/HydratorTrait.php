@@ -39,7 +39,7 @@ trait HydratorTrait
             return $this;
         }
 
-        foreach (array_keys((array)$this) as $property) {
+        foreach (array_keys(get_object_vars($this)) as $property) {
             if (!isset(self::MAP_JSON_TO_ENTITY[$property])) {
                 if (isset($data[$property])) {
                     $this->$property = $data[$property];

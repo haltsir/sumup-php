@@ -46,11 +46,6 @@ class ShelfService extends SumupService
     protected $requiredArgumentsValidator;
 
     /**
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
      * @var ShelfFactory
      */
     protected $shelfFactory;
@@ -61,7 +56,6 @@ class ShelfService extends SumupService
         Request $request,
         $allowedArgumentsValidator,
         $requiredArgumentsValidator,
-        Collection $collection,
         ShelfFactory $shelfFactory)
     {
         $this->configuration = $configuration;
@@ -69,7 +63,6 @@ class ShelfService extends SumupService
         $this->request = $request;
         $this->allowedArgumentsValidator = $allowedArgumentsValidator;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
-        $this->collection = $collection;
         $this->shelfFactory = $shelfFactory;
     }
 
@@ -80,7 +73,6 @@ class ShelfService extends SumupService
      * @return Collection
      * @throws InvalidArgumentException
      * @throws RequestException
-     * @throws \Exception
      */
     public function all(array $options = [])
     {
@@ -115,7 +107,6 @@ class ShelfService extends SumupService
      * @return mixed
      * @throws InvalidArgumentException
      * @throws RequestException
-     * @throws \Exception
      */
     public function get($id, array $options = [])
     {
@@ -155,7 +146,6 @@ class ShelfService extends SumupService
      * @return mixed
      * @throws InvalidArgumentException
      * @throws RequestException
-     * @throws \Exception
      */
     public function create(array $data)
     {
@@ -189,7 +179,6 @@ class ShelfService extends SumupService
      * @return bool
      * @throws InvalidArgumentException
      * @throws RequestException
-     * @throws \Exception
      */
     public function update($id, array $data)
     {
@@ -223,7 +212,6 @@ class ShelfService extends SumupService
      * @param $id
      * @return bool
      * @throws RequestException
-     * @throws \Exception
      */
     public function delete($id)
     {

@@ -38,11 +38,6 @@ class ProductService extends SumupService
     protected $requiredArgumentsValidator;
 
     /**
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
      * @var ProductFactory
      */
     protected $productFactory;
@@ -52,14 +47,12 @@ class ProductService extends SumupService
         OAuthClientInterface $client,
         Request $request,
         string $requiredArgumentsValidator,
-        Collection $collection,
         ProductFactory $productFactory)
     {
         $this->configuration = $configuration;
         $this->client = $client;
         $this->request = $request;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
-        $this->collection = $collection;
         $this->productFactory = $productFactory;
     }
 

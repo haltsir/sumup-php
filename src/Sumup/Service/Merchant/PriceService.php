@@ -38,11 +38,6 @@ class PriceService extends SumupService
     protected $requiredArgumentsValidator;
 
     /**
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
      * @var PriceFactory
      */
     protected $priceFactory;
@@ -52,14 +47,12 @@ class PriceService extends SumupService
         OAuthClientInterface $client,
         Request $request,
         string $requiredArgumentsValidator,
-        Collection $collection,
         PriceFactory $priceFactory)
     {
         $this->configuration = $configuration;
         $this->client = $client;
         $this->request = $request;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
-        $this->collection = $collection;
         $this->priceFactory = $priceFactory;
     }
 
