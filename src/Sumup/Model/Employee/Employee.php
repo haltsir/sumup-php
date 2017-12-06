@@ -2,7 +2,6 @@
 
 namespace Sumup\Api\Model\Employee;
 
-use Sumup\Api\Model\Mobile\Settings;
 use Sumup\Api\Traits\HydratorTrait;
 
 class Employee

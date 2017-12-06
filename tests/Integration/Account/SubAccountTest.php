@@ -93,7 +93,7 @@ class SubAccountTest extends TestCase
         $this->expectException(RequestException::class);
 
         $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
-            $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
+        $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
     }
 
     public function testUpdateSubAccount()
