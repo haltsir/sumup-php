@@ -2,10 +2,8 @@
 
 namespace Sumup\Api\Service\Merchant;
 
-use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\ConfigurationInterface;
-use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Repository\Collection;
@@ -72,7 +70,6 @@ class ShelfService extends SumupService
      * @param array $options
      * @return Collection
      * @throws InvalidArgumentException
-     * @throws RequestException
      */
     public function all(array $options = [])
     {
@@ -87,14 +84,8 @@ class ShelfService extends SumupService
             $request->setQuery(implode('include[]=', $options));
         }
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return $this->shelfFactory->collect(json_decode((string)$response->getBody(), true));
     }
@@ -106,7 +97,6 @@ class ShelfService extends SumupService
      * @param array $options
      * @return mixed
      * @throws InvalidArgumentException
-     * @throws RequestException
      */
     public function get($id, array $options = [])
     {
@@ -125,14 +115,8 @@ class ShelfService extends SumupService
             $request->setQuery(implode('include[]=', $options));
         }
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         $shelf = $this->shelfFactory->create();
 
@@ -145,7 +129,6 @@ class ShelfService extends SumupService
      * @param array $data
      * @return mixed
      * @throws InvalidArgumentException
-     * @throws RequestException
      */
     public function create(array $data)
     {
@@ -157,14 +140,8 @@ class ShelfService extends SumupService
                                  ->setUri($this->configuration->getFullEndpoint() . '/me/merchant-profile/shelves')
                                  ->setBody($data);
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         $shelf = $this->shelfFactory->create();
 
@@ -178,7 +155,6 @@ class ShelfService extends SumupService
      * @param array $data
      * @return bool
      * @throws InvalidArgumentException
-     * @throws RequestException
      */
     public function update($id, array $data)
     {
@@ -194,14 +170,8 @@ class ShelfService extends SumupService
                                  )
                                  ->setBody($data);
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return ($response->getStatusCode() === 204);
     }
@@ -211,7 +181,6 @@ class ShelfService extends SumupService
      *
      * @param $id
      * @return bool
-     * @throws RequestException
      */
     public function delete($id)
     {
@@ -221,14 +190,9 @@ class ShelfService extends SumupService
                                      . '/me/merchant-profile/shelves/'
                                      . (int)$id
                                  );
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return ($response->getStatusCode() === 204);
     }

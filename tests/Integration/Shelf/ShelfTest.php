@@ -11,11 +11,12 @@ use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\SumupClient;
+use Sumup\Api\Service\Exception\InvalidArgumentException;
 
 class ShelfTest extends TestCase
 {
     /**
-     * @var SumupClient
+     * @var \PHPUnit_Framework_MockObject_MockObject | SumupClient
      */
     protected $client;
 
@@ -58,6 +59,12 @@ class ShelfTest extends TestCase
         $this->assertInstanceOf(Collection::class, $shelves);
     }
 
+    public function testShouldThrowInvalidArgumentExceptionWhenGettingAllShelvesIfInvalidOptionIsPassed()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->shelfService->all(['invalidArgument']);
+    }
+
     public function testGetShelf()
     {
         $shelves = $this->shelfService->all()
@@ -71,6 +78,16 @@ class ShelfTest extends TestCase
         $this->assertObjectHasAttribute('products', $shelf);
     }
 
+    public function testShouldThrowInvalidArgumentExceptionWhenGettingShelfIfInvalidOptionIsPassed()
+    {
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->shelfService->get($shelf->id, ['invalidArgument']);
+
+        $this->toDelete[] = $shelf;
+    }
+
     public function testCreateShelf()
     {
         $shelf = $this->shelfService->create(['name' => 'test shelf']);
@@ -78,6 +95,12 @@ class ShelfTest extends TestCase
         $this->assertAttributeGreaterThan(0, 'id', $shelf);
 
         $this->toDelete[] = $shelf;
+    }
+
+    public function testShouldThrowInvalidArgumentExceptionWhenCreatingShelfIfInvalidArgumentIsPassed()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->shelfService->create(['InvalidArgument']);
     }
 
     public function testUpdateShelf()
@@ -91,6 +114,12 @@ class ShelfTest extends TestCase
         $this->assertEquals('updated test shelf', $fetchedShelf->name);
 
         $this->toDelete[] = $createdShelf;
+    }
+
+    public function testShouldThrowInvalidArgumentExceptionWhenUpdatingShelfIfIdIsZero()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->shelfService->update('', ['name' => 'updated test shelf']);
     }
 
     public function testDeleteShelf()

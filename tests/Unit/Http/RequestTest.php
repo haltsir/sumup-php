@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Request;
+namespace Unit\Http;
 
 use GuzzleHttp\Client;
 use PHPUnit\Framework\TestCase;
@@ -36,5 +36,11 @@ class RequestTest extends TestCase
     {
         $this->request->setBody(['property' => 'value', 'key' => 'dummy']);
         $this->assertArraySubset(['property' => 'value', 'key' => 'dummy'], $this->request->getBody());
+    }
+
+    public function testSetJson()
+    {
+        $this->request->setJson('{"prop": "val"}');
+        $this->assertArraySubset(['prop' => 'val'], $this->request->getBody());
     }
 }

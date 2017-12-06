@@ -7,6 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
 use Sumup\Api\Http\Exception\RequestException;
+use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Service\Merchant\ProductService;
@@ -67,6 +68,16 @@ class ProductTest extends TestCase
         $this->assertGreaterThan(0, $product->id);
         $this->assertGreaterThan(0, $product->shelfId);
         $this->assertEquals('test product', $product->title);
+
+        $this->toDelete[] = $shelf;
+    }
+
+    public function testShouldThrowRequiredArgumentExceptionIfRequiredParamIsMissingOnCreateProduct()
+    {
+        $this->expectException(RequiredArgumentException::class);
+        $shelf = $this->shelfService->create(['name' => 'test shelf']);
+
+        $this->productService->create($shelf->id, ['InvalidArgument']);
 
         $this->toDelete[] = $shelf;
     }
