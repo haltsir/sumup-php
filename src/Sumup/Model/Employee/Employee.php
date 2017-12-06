@@ -3,9 +3,17 @@
 namespace Sumup\Api\Model\Employee;
 
 use Sumup\Api\Model\Mobile\Settings;
+use Sumup\Api\Traits\HydratorTrait;
 
 class Employee
 {
+    use HydratorTrait;
+
+    const MAP_JSON_TO_ENTITY
+        = [
+            'createdAt' => ['path' => 'created_at']
+        ];
+
     /**
      * @var int
      */
@@ -26,13 +34,4 @@ class Employee
      */
     public $createdAt;
 
-    /**
-     * @var Permission
-     */
-    public $permissions;
-
-    /**
-     * @var Settings
-     */
-    public $appSettings;
 }

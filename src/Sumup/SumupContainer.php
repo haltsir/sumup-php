@@ -9,9 +9,11 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
+use Sumup\Api\Model\Employee\Employee;
 use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
+use Sumup\Api\Model\Factory\SubaccountFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Merchant;
@@ -21,6 +23,7 @@ use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
+use Sumup\Api\Service\Account\SubaccountService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Service\Account\PersonalProfileService;
 use Sumup\Api\Service\Merchant\PriceService;
@@ -142,6 +145,24 @@ class SumupContainer extends Container implements ContainerInterface
                                     $container['http.request'], $container['validator.required_arguments'],
                                     $container['collection'], $container['price.factory']);
         });
+
+        /* SubAccount */
+        $this['subaccount.model'] = $this->factory(function () {
+            return new Employee();
+        });
+
+        $this['subaccount.factory'] = $this->factory(function ($container) {
+            return new SubaccountFactory($container['subaccount.model'], $container['collection']);
+        });
+
+        $this['subaccount.service'] = $this->factory(function ($container) {
+            return new SubaccountService($container['subaccount.model'], $container['subaccount.factory'],
+                                         $container['collection'],
+                                         $container['validator.required_arguments'],
+                                         $container['http.request'],
+                                         $container['configuration'], $container['oauth.client']);
+        });
+
     }
 
     /**
