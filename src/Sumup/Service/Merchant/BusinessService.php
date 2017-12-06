@@ -2,10 +2,8 @@
 
 namespace Sumup\Api\Service\Merchant;
 
-use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\Configuration;
-use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Business;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
@@ -57,7 +55,6 @@ class BusinessService extends SumupService
      * Get current business face.
      *
      * @return Business
-     * @throws RequestException
      */
     public function get()
     {
@@ -67,14 +64,8 @@ class BusinessService extends SumupService
                                      . '/me/merchant-profile/doing-business-as'
                                  );
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return $this->businessModel->hydrate(json_decode((string)$response->getBody(), true));
     }
@@ -84,7 +75,6 @@ class BusinessService extends SumupService
      *
      * @param array $data
      * @return bool
-     * @throws RequestException
      */
     public function update(array $data)
     {
@@ -97,14 +87,8 @@ class BusinessService extends SumupService
                                  )
                                  ->setJson($business->serialize());
 
-        try {
-            /** @var ResponseInterface $response */
-            $response = $this->client->request($request);
-        } catch (ClientException $clientException) {
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-            throw new RequestException($content->message);
-        }
+        /** @var ResponseInterface $response */
+        $response = $this->client->request($request);
 
         return (200 === $response->getStatusCode());
     }
