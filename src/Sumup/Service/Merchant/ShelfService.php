@@ -4,7 +4,6 @@ namespace Sumup\Api\Service\Merchant;
 
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\ConfigurationInterface;
-use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Repository\Collection;
@@ -17,7 +16,7 @@ use Sumup\Api\Validator\RequiredArgumentsValidator;
 class ShelfService extends SumupService
 {
     const ALLOWED_OPTIONS = ['products'];
-    const REQUIRED_DATA   = ['name'];
+    const REQUIRED_DATA = ['name'];
 
     /**
      * @var ConfigurationInterface
@@ -45,11 +44,6 @@ class ShelfService extends SumupService
     protected $requiredArgumentsValidator;
 
     /**
-     * @var Collection
-     */
-    protected $collection;
-
-    /**
      * @var ShelfFactory
      */
     protected $shelfFactory;
@@ -60,7 +54,6 @@ class ShelfService extends SumupService
         Request $request,
         $allowedArgumentsValidator,
         $requiredArgumentsValidator,
-        Collection $collection,
         ShelfFactory $shelfFactory)
     {
         $this->configuration = $configuration;
@@ -68,7 +61,6 @@ class ShelfService extends SumupService
         $this->request = $request;
         $this->allowedArgumentsValidator = $allowedArgumentsValidator;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
-        $this->collection = $collection;
         $this->shelfFactory = $shelfFactory;
     }
 

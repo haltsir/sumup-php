@@ -3,13 +3,22 @@
 namespace Sumup\Api\Model\Merchant;
 
 use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
 class Business
 {
-    use HydratorTrait;
+    use HydratorTrait, SerializerTrait;
 
     const MAP_JSON_TO_ENTITY = [
-        'businessName' => ['path' => 'business_name'],
+        'name' => ['path' => 'business_name'],
+        'address' => [
+            'path' => 'address',
+            'type' => Address::class
+        ]
+    ];
+
+    const MAP_ENTITY_TO_JSON = [
+        'name' => ['path' => 'business_name'],
         'address' => [
             'path' => 'address',
             'type' => Address::class
@@ -19,7 +28,7 @@ class Business
     /**
      * @var string
      */
-    public $businessName;
+    public $name;
 
     /**
      * @var string
