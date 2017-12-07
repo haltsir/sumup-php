@@ -85,18 +85,18 @@ class OperatorService extends SumupService
     /**
      * Get Operator
      *
-     * @param string $operatorId
+     * @param string $id
      * @return mixed
      * @throws RequiredArgumentException
      */
-    public function get(string $operatorId)
+    public function get(string $id)
     {
-        if (empty($operatorId)) {
+        if (empty($id)) {
             throw new RequiredArgumentException('Operator id is required.');
         }
 
         $request = $this->request->setMethod('GET')
-                                 ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorId);
+                                 ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $id);
 
         $response = $this->client->request($request);
 
@@ -134,14 +134,14 @@ class OperatorService extends SumupService
     /**
      * Update Operator
      *
-     * @param string $operatorId
+     * @param string $id
      * @param $body
      * @return bool
      * @throws RequiredArgumentException
      */
-    public function update(string $operatorId, $body)
+    public function update(string $id, $body)
     {
-        if (empty($operatorId)) {
+        if (empty($id)) {
             throw new RequiredArgumentException('Operator id is required.');
         }
 
@@ -151,7 +151,7 @@ class OperatorService extends SumupService
 
         $request = $this->request
             ->setMethod('PUT')
-            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorId)
+            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $id)
             ->setJson($operator->serialize());
 
         $response = $this->client->request($request);
@@ -163,19 +163,19 @@ class OperatorService extends SumupService
     /**
      * Disable Operator
      *
-     * @param string $operatorId
+     * @param string $id
      * @return bool
      * @throws RequiredArgumentException
      */
-    public function disable(string $operatorId)
+    public function disable(string $id)
     {
-        if (empty($operatorId)) {
+        if (empty($id)) {
             throw new RequiredArgumentException('Operator id is required.');
         }
 
         $request = $this->request
             ->setMethod('DELETE')
-            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorId);
+            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $id);
 
         $response = $this->client->request($request);
 
