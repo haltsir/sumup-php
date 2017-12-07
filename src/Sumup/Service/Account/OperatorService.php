@@ -85,18 +85,18 @@ class OperatorService extends SumupService
     /**
      * Get Operator
      *
-     * @param string $operatorCode
+     * @param string $operatorId
      * @return mixed
      * @throws RequiredArgumentException
      */
-    public function get(string $operatorCode)
+    public function get(string $operatorId)
     {
-        if (empty($operatorCode)) {
-            throw new RequiredArgumentException('SubAccount ID is required.');
+        if (empty($operatorId)) {
+            throw new RequiredArgumentException('Operator id is required.');
         }
 
         $request = $this->request->setMethod('GET')
-                                 ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorCode);
+                                 ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorId);
 
         $response = $this->client->request($request);
 
@@ -134,15 +134,15 @@ class OperatorService extends SumupService
     /**
      * Update Operator
      *
-     * @param string $operatorCode
+     * @param string $operatorId
      * @param $body
      * @return bool
      * @throws RequiredArgumentException
      */
-    public function update(string $operatorCode, $body)
+    public function update(string $operatorId, $body)
     {
-        if (empty($operatorCode)) {
-            throw new RequiredArgumentException('SubAccount ID is required.');
+        if (empty($operatorId)) {
+            throw new RequiredArgumentException('Operator id is required.');
         }
 
         $operator = $this->operatorFactory
@@ -151,7 +151,7 @@ class OperatorService extends SumupService
 
         $request = $this->request
             ->setMethod('PUT')
-            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorCode)
+            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorId)
             ->setJson($operator->serialize());
 
         $response = $this->client->request($request);
@@ -163,19 +163,19 @@ class OperatorService extends SumupService
     /**
      * Disable Operator
      *
-     * @param string $operatorCode
+     * @param string $operatorId
      * @return bool
      * @throws RequiredArgumentException
      */
-    public function disable(string $operatorCode)
+    public function disable(string $operatorId)
     {
-        if (empty($operatorCode)) {
-            throw new RequiredArgumentException('SubAccount ID is required.');
+        if (empty($operatorId)) {
+            throw new RequiredArgumentException('Operator id is required.');
         }
 
         $request = $this->request
             ->setMethod('DELETE')
-            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorCode);
+            ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorId);
 
         $response = $this->client->request($request);
 
