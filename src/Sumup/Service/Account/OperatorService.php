@@ -68,7 +68,7 @@ class OperatorService extends SumupService
     }
 
     /**
-     * Get All SubAccounts
+     * Get All Operators
      *
      * @return Collection
      */
@@ -83,7 +83,7 @@ class OperatorService extends SumupService
     }
 
     /**
-     * Get SubAccount
+     * Get Operator
      *
      * @param string $operatorCode
      * @return mixed
@@ -100,13 +100,13 @@ class OperatorService extends SumupService
 
         $response = $this->client->request($request);
 
-        $subAccount = $this->operatorFactory->create();
+        $operator = $this->operatorFactory->create();
 
-        return $subAccount->hydrate(json_decode((string)$response->getBody(), true));
+        return $operator->hydrate(json_decode((string)$response->getBody(), true));
     }
 
     /**
-     * Create SubAccount
+     * Create Operator
      *
      * @param array $body
      * @return mixed
@@ -114,7 +114,7 @@ class OperatorService extends SumupService
      */
     public function create(array $body)
     {
-        $subAccount = $this->operatorFactory
+        $operator = $this->operatorFactory
             ->create()
             ->hydrate($body);
 
@@ -125,14 +125,14 @@ class OperatorService extends SumupService
         $request = $this->request->setMethod('POST')
                                  ->setUri($this->configuration->getFullEndpoint() .
                                           '/me/accounts')
-                                 ->setJson($subAccount->serialize());
+                                 ->setJson($operator->serialize());
 
         $response = $this->client->request($request);
-        return $subAccount->hydrate(json_decode((string)$response->getBody(), true));
+        return $operator->hydrate(json_decode((string)$response->getBody(), true));
     }
 
     /**
-     * Update SubAccount
+     * Update Operator
      *
      * @param string $operatorCode
      * @param $body
@@ -145,14 +145,14 @@ class OperatorService extends SumupService
             throw new RequiredArgumentException('SubAccount ID is required.');
         }
 
-        $subAccount = $this->operatorFactory
+        $operator = $this->operatorFactory
             ->create()
             ->hydrate($body);
 
         $request = $this->request
             ->setMethod('PUT')
             ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorCode)
-            ->setJson($subAccount->serialize());
+            ->setJson($operator->serialize());
 
         $response = $this->client->request($request);
 
@@ -161,7 +161,7 @@ class OperatorService extends SumupService
     }
 
     /**
-     * Disable SubAccount
+     * Disable Operator
      *
      * @param string $operatorCode
      * @return bool
