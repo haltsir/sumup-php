@@ -13,7 +13,7 @@ use Sumup\Api\Model\Employee\Employee;
 use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
-use Sumup\Api\Model\Factory\SubaccountFactory;
+use Sumup\Api\Model\Factory\OperatorFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Business;
@@ -25,7 +25,7 @@ use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
-use Sumup\Api\Service\Account\SubaccountService;
+use Sumup\Api\Service\Account\OperatorService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Service\Account\PersonalProfileService;
 use Sumup\Api\Service\Merchant\PriceService;
@@ -157,17 +157,17 @@ class SumupContainer extends Container implements ContainerInterface
                                        $container['business.model']);
         });
 
-        /* SubAccount */
-        $this['subaccount.model'] = $this->factory(function () {
+        /* Operator */
+        $this['operator.model'] = $this->factory(function () {
             return new Employee();
         });
 
-        $this['subaccount.factory'] = $this->factory(function ($container) {
-            return new SubaccountFactory($container['subaccount.model'], $container['collection']);
+        $this['operator.factory'] = $this->factory(function ($container) {
+            return new OperatorFactory($container['operator.model'], $container['collection']);
         });
 
-        $this['subaccount.service'] = $this->factory(function ($container) {
-            return new SubaccountService($container['subaccount.factory'],
+        $this['operator.service'] = $this->factory(function ($container) {
+            return new OperatorService($container['operator.factory'],
                                          $container['collection'],
                                          $container['validator.required_arguments'],
                                          $container['http.request'],

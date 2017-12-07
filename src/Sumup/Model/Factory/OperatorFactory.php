@@ -6,7 +6,7 @@ namespace Sumup\Api\Model\Factory;
 use Sumup\Api\Model\Employee\Employee;
 use Sumup\Api\Repository\Collection;
 
-class SubaccountFactory extends FactoryAbstract implements FactoryInterface
+class OperatorFactory extends FactoryAbstract implements FactoryInterface
 {
     /**
      * @var Employee

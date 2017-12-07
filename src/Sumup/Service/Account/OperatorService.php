@@ -5,15 +5,14 @@ namespace Sumup\Api\Service\Account;
 use Sumup\Api\Configuration\ConfigurationInterface;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Http\Request;
-use Sumup\Api\Model\Employee\Employee;
-use Sumup\Api\Model\Factory\SubaccountFactory;
+use Sumup\Api\Model\Factory\OperatorFactory;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
 use Sumup\Api\Service\Exception\InvalidArgumentException;
 use Sumup\Api\Service\SumupService;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 
-class SubaccountService extends SumupService
+class OperatorService extends SumupService
 {
     /**
      * @var RequiredArgumentsValidator
@@ -36,9 +35,9 @@ class SubaccountService extends SumupService
     protected $client;
 
     /**
-     * @var SubaccountFactory
+     * @var OperatorFactory
      */
-    protected $subAccountFactory;
+    protected $operatorFactory;
 
     /**
      * @var Collection
@@ -47,18 +46,17 @@ class SubaccountService extends SumupService
 
     const REQUIRED_ARGS = ['username', 'password'];
 
-
     /**
-     * SubaccountService constructor.
-     * @param Employee $employeeModel
-     * @param SubaccountFactory $subAccountFactory
+     * OperatorService constructor.
+     *
+     * @param OperatorFactory $operatorFactory
      * @param Collection $collection
      * @param $requiredArgumentsValidator
      * @param Request $request
      * @param ConfigurationInterface $configuration
      * @param OAuthClientInterface $client
      */
-    public function __construct(SubaccountFactory $subAccountFactory, Collection $collection,
+    public function __construct(OperatorFactory $operatorFactory, Collection $collection,
                                 $requiredArgumentsValidator,
                                 Request $request, ConfigurationInterface $configuration, OAuthClientInterface $client)
     {
@@ -66,7 +64,7 @@ class SubaccountService extends SumupService
         $this->request = $request;
         $this->configuration = $configuration;
         $this->client = $client;
-        $this->subAccountFactory = $subAccountFactory;
+        $this->operatorFactory = $operatorFactory;
     }
 
     /**
@@ -81,7 +79,7 @@ class SubaccountService extends SumupService
 
         $response = $this->client->request($request);
 
-        return $this->subAccountFactory->collect(json_decode((string)$response->getBody(), true));
+        return $this->operatorFactory->collect(json_decode((string)$response->getBody(), true));
     }
 
     /**
@@ -93,22 +91,19 @@ class SubaccountService extends SumupService
      */
     public function get(string $operatorCode)
     {
-
         if (empty($operatorCode)) {
             throw new RequiredArgumentException('SubAccount ID is required.');
         }
-
 
         $request = $this->request->setMethod('GET')
                                  ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorCode);
 
         $response = $this->client->request($request);
 
-        $subAccount = $this->subAccountFactory->create();
+        $subAccount = $this->operatorFactory->create();
 
         return $subAccount->hydrate(json_decode((string)$response->getBody(), true));
     }
-
 
     /**
      * Create SubAccount
@@ -119,7 +114,7 @@ class SubaccountService extends SumupService
      */
     public function create(array $body)
     {
-        $subAccount = $this->subAccountFactory
+        $subAccount = $this->operatorFactory
             ->create()
             ->hydrate($body);
 
@@ -150,7 +145,7 @@ class SubaccountService extends SumupService
             throw new RequiredArgumentException('SubAccount ID is required.');
         }
 
-        $subAccount = $this->subAccountFactory
+        $subAccount = $this->operatorFactory
             ->create()
             ->hydrate($body);
 

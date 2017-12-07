@@ -9,12 +9,12 @@ use Sumup\Api\Exception\SumupClientException;
 use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Repository\Collection;
-use Sumup\Api\Service\Account\SubaccountService;
+use Sumup\Api\Service\Account\OperatorService;
 use Sumup\Api\Service\Exception\InvalidArgumentException;
 use Sumup\Api\SumupClient;
 use Sumup\Api\Model\Employee\Employee;
 
-class SubAccountTest extends TestCase
+class OperatorTest extends TestCase
 {
     /**
      * @var Configuration
@@ -27,15 +27,18 @@ class SubAccountTest extends TestCase
     protected $client;
 
     /**
-     * @var SubaccountService
+     * @var OperatorService
      */
-    protected $subAccountService;
+    protected $operatorService;
 
     /**
      * @var string
      */
     protected $username;
 
+    /**
+     * @var string
+     */
     protected $password;
 
 
@@ -54,7 +57,7 @@ class SubAccountTest extends TestCase
 
         try {
             $this->client = new SumupClient($this->config);
-            $this->subAccountService = $this->client->createService('subaccount');
+            $this->operatorService = $this->client->createService('operator');
         } catch (SumupClientException $clientException) {
             $this->fail($clientException->getMessage());
         }
@@ -62,14 +65,14 @@ class SubAccountTest extends TestCase
 
     public function testGetListSubAccounts()
     {
-        $results = $this->subAccountService->all();
+        $results = $this->operatorService->all();
         $this->assertInstanceOf(Collection::class, $results);
     }
 
     public function testGetSubAccount()
     {
-        $subAccount = $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
-        $account = $this->subAccountService->get($subAccount->id);
+        $subAccount = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $account = $this->operatorService->get($subAccount->id);
 
         $this->assertEquals($subAccount->id, $account->id);
         $this->assertEquals($this->username, $account->username);
@@ -77,7 +80,7 @@ class SubAccountTest extends TestCase
 
     public function testCreateSubAccount()
     {
-        $subAcc = $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
+        $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
         $this->assertInstanceOf(Employee::class, $subAcc);
         $this->assertEquals($this->username, $subAcc->username);
         $this->assertTrue(property_exists($subAcc, 'id'));
@@ -86,26 +89,26 @@ class SubAccountTest extends TestCase
     public function testShouldThrowInvalidArgumentExceptionWhenCreatingSubAccountIfInvalidArgumentIsPassed()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->subAccountService->create(['InvalidArgument']);
+        $this->operatorService->create(['InvalidArgument']);
     }
 
     public function testShouldThrowRequestExceptionIfUsernameExists()
     {
         $this->expectException(RequestException::class);
 
-        $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
-        $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
+        $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
     }
 
     public function testUpdateSubAccount()
     {
         $updatedUsername = $this->generateRandomUsername();
-        $subAcc = $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
-        $success = $this->subAccountService->update($subAcc->id, ['username' => $updatedUsername]);
+        $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $success = $this->operatorService->update($subAcc->id, ['username' => $updatedUsername]);
 
         $this->assertTrue($success);
 
-        $passwordUpdate = $this->subAccountService->update($subAcc->id, ['password' => 'passWord123']);
+        $passwordUpdate = $this->operatorService->update($subAcc->id, ['password' => 'passWord123']);
 
         $this->assertTrue($passwordUpdate);
     }
@@ -113,13 +116,13 @@ class SubAccountTest extends TestCase
     public function testShouldThrowInvalidArgumentExceptionWhenUpdatingSubAccountIfIdIsEmptyString()
     {
         $this->expectException(RequiredArgumentException::class);
-        $this->subAccountService->update('', ['name' => $this->username]);
+        $this->operatorService->update('', ['name' => $this->username]);
     }
 
     public function testDisableSubAccount()
     {
-        $subAcc = $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
-        $this->assertTrue($this->subAccountService->disable($subAcc->id));
+        $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $this->assertTrue($this->operatorService->disable($subAcc->id));
     }
 
     /**
