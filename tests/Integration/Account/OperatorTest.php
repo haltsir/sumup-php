@@ -64,30 +64,30 @@ class OperatorTest extends TestCase
         }
     }
 
-    public function testGetListSubAccounts()
+    public function testGetListOperators()
     {
         $results = $this->operatorService->all();
         $this->assertInstanceOf(Collection::class, $results);
     }
 
-    public function testGetSubAccount()
+    public function testGetOperator()
     {
-        $subAccount = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
-        $account = $this->operatorService->get($subAccount->id);
+        $operator = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $account = $this->operatorService->get($operator->id);
 
-        $this->assertEquals($subAccount->id, $account->id);
+        $this->assertEquals($operator->id, $account->id);
         $this->assertEquals($this->username, $account->username);
     }
 
-    public function testCreateSubAccount()
+    public function testCreateOperator()
     {
-        $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
-        $this->assertInstanceOf(Operator::class, $subAcc);
-        $this->assertEquals($this->username, $subAcc->username);
-        $this->assertTrue(property_exists($subAcc, 'id'));
+        $operator = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $this->assertInstanceOf(Operator::class, $operator);
+        $this->assertEquals($this->username, $operator->username);
+        $this->assertTrue(property_exists($operator, 'id'));
     }
 
-    public function testShouldThrowInvalidArgumentExceptionWhenCreatingSubAccountIfInvalidArgumentIsPassed()
+    public function testShouldThrowInvalidArgumentExceptionWhenCreatingOperatorIfInvalidArgumentIsPassed()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->operatorService->create(['InvalidArgument']);
@@ -101,35 +101,35 @@ class OperatorTest extends TestCase
         $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
     }
 
-    public function testUpdateSubAccount()
+    public function testUpdateOperator()
     {
         $updatedUsername = $this->generateRandomUsername();
-        $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
-        $success = $this->operatorService->update($subAcc->id, ['username' => $updatedUsername]);
+        $operator = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $success = $this->operatorService->update($operator->id, ['username' => $updatedUsername]);
 
         $this->assertTrue($success);
 
-        $passwordUpdate = $this->operatorService->update($subAcc->id, ['password' => 'passWord123']);
+        $passwordUpdate = $this->operatorService->update($operator->id, ['password' => 'passWord123']);
 
         $this->assertTrue($passwordUpdate);
     }
 
-    public function testShouldThrowInvalidArgumentExceptionWhenUpdatingSubAccountIfIdIsEmptyString()
+    public function testShouldThrowInvalidArgumentExceptionWhenUpdatingOperatorIfIdIsEmptyString()
     {
         $this->expectException(RequiredArgumentException::class);
         $this->operatorService->update('', ['name' => $this->username]);
     }
 
-    public function testDisableSubAccount()
+    public function testDisableOperator()
     {
-        $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
-        $this->assertTrue($this->operatorService->disable($subAcc->id));
+        $operator = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
+        $this->assertTrue($this->operatorService->disable($operator->id));
     }
 
     /**
      * Generate random username ( email )
      */
-    function generateRandomUsername($length = 5, $mail = 'abv.bg')
+    function generateRandomUsername($length = 5, $mail = 'example.org')
     {
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
