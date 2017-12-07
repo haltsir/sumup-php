@@ -3,10 +3,11 @@
 namespace Sumup\Api\Model\Employee;
 
 use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
 class Employee
 {
-    use HydratorTrait;
+    use HydratorTrait, SerializerTrait;
 
     const MAP_JSON_TO_ENTITY
         = [

@@ -15,12 +15,6 @@ use Sumup\Api\Validator\RequiredArgumentsValidator;
 
 class SubaccountService extends SumupService
 {
-
-    /**
-     * @var Employee
-     */
-    protected $employeeModel;
-
     /**
      * @var RequiredArgumentsValidator
      */
@@ -64,11 +58,10 @@ class SubaccountService extends SumupService
      * @param ConfigurationInterface $configuration
      * @param OAuthClientInterface $client
      */
-    public function __construct(Employee $employeeModel, SubaccountFactory $subAccountFactory, Collection $collection,
+    public function __construct(SubaccountFactory $subAccountFactory, Collection $collection,
                                 $requiredArgumentsValidator,
                                 Request $request, ConfigurationInterface $configuration, OAuthClientInterface $client)
     {
-        $this->employeeModel = $employeeModel;
         $this->requiredArgumentsValidator = $requiredArgumentsValidator;
         $this->request = $request;
         $this->configuration = $configuration;
@@ -126,6 +119,9 @@ class SubaccountService extends SumupService
      */
     public function create(array $body)
     {
+        $subAccount = $this->subAccountFactory
+            ->create()
+            ->hydrate($body);
 
         if (false === $this->requiredArgumentsValidator::validate($body, self::REQUIRED_ARGS)) {
             throw new InvalidArgumentException('Missing required data provided to ' . __CLASS__);
@@ -134,9 +130,7 @@ class SubaccountService extends SumupService
         $request = $this->request->setMethod('POST')
                                  ->setUri($this->configuration->getFullEndpoint() .
                                           '/me/accounts')
-                                 ->setBody($body);
-
-        $subAccount = $this->subAccountFactory->create();
+                                 ->setJson($subAccount->serialize());
 
         $response = $this->client->request($request);
         return $subAccount->hydrate(json_decode((string)$response->getBody(), true));
@@ -156,10 +150,14 @@ class SubaccountService extends SumupService
             throw new RequiredArgumentException('SubAccount ID is required.');
         }
 
+        $subAccount = $this->subAccountFactory
+            ->create()
+            ->hydrate($body);
+
         $request = $this->request
             ->setMethod('PUT')
             ->setUri($this->configuration->getFullEndpoint() . '/me/accounts/' . $operatorCode)
-            ->setBody($body);
+            ->setJson($subAccount->serialize());
 
         $response = $this->client->request($request);
 

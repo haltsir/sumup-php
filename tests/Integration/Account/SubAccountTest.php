@@ -79,6 +79,7 @@ class SubAccountTest extends TestCase
     {
         $subAcc = $this->subAccountService->create(['username' => $this->username, 'password' => $this->password]);
         $this->assertInstanceOf(Employee::class, $subAcc);
+        $this->assertEquals($this->username, $subAcc->username);
         $this->assertTrue(property_exists($subAcc, 'id'));
     }
 

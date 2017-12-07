@@ -167,7 +167,7 @@ class SumupContainer extends Container implements ContainerInterface
         });
 
         $this['subaccount.service'] = $this->factory(function ($container) {
-            return new SubaccountService($container['subaccount.model'], $container['subaccount.factory'],
+            return new SubaccountService($container['subaccount.factory'],
                                          $container['collection'],
                                          $container['validator.required_arguments'],
                                          $container['http.request'],
