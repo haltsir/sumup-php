@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumup\Api\Model\Employee;
+namespace Sumup\Api\Model\Operator;
 
 class Permission
 {

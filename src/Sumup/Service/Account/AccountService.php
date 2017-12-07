@@ -7,6 +7,7 @@ use Sumup\Api\Configuration\ConfigurationInterface;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
+use Sumup\Api\Service\Exception\InvalidArgumentException;
 use Sumup\Api\Service\SumupService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 
@@ -66,7 +67,7 @@ class AccountService extends SumupService
     public function get(array $options = [])
     {
         if (false === $this->allowedArgumentsValidator::validate($options, self::ALLOWED_ACCOUNT_OPTIONS)) {
-            throw new \Exception('Invalid arguments provided to ' . __CLASS__ . '.');
+            throw new InvalidArgumentException('Invalid arguments provided to ' . __CLASS__ . '.');
         }
 
         $request = $this->request->setMethod('GET')

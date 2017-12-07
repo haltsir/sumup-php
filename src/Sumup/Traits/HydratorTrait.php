@@ -17,6 +17,11 @@ trait HydratorTrait
         }
 
         foreach (array_keys(get_object_vars($this)) as $property) {
+            $key = camelCaseToSnakeCase($property);
+            if (array_key_exists($key, $data)) {
+                $this->$property = $data[$key];
+            }
+
             if (!array_key_exists($property, $data)) {
                 continue;
             }

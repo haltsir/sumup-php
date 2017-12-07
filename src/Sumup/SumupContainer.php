@@ -9,9 +9,11 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
+use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
+use Sumup\Api\Model\Factory\OperatorFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Business;
@@ -23,6 +25,7 @@ use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
+use Sumup\Api\Service\Account\OperatorService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\Service\Account\PersonalProfileService;
 use Sumup\Api\Service\Merchant\PriceService;
@@ -153,6 +156,24 @@ class SumupContainer extends Container implements ContainerInterface
                                        $container['http.request'], $container['validator.required_arguments'],
                                        $container['business.model']);
         });
+
+        /* Operator */
+        $this['operator.model'] = $this->factory(function () {
+            return new Operator();
+        });
+
+        $this['operator.factory'] = $this->factory(function ($container) {
+            return new OperatorFactory($container['operator.model'], $container['collection']);
+        });
+
+        $this['operator.service'] = $this->factory(function ($container) {
+            return new OperatorService($container['operator.factory'],
+                                         $container['collection'],
+                                         $container['validator.required_arguments'],
+                                         $container['http.request'],
+                                         $container['configuration'], $container['oauth.client']);
+        });
+
     }
 
     /**

@@ -1,11 +1,14 @@
 <?php
 
-namespace Sumup\Api\Model\Employee;
+namespace Sumup\Api\Model\Operator;
 
-use Sumup\Api\Model\Mobile\Settings;
+use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
-class Employee
+class Operator
 {
+    use HydratorTrait, SerializerTrait;
+
     /**
      * @var int
      */
@@ -26,13 +29,4 @@ class Employee
      */
     public $createdAt;
 
-    /**
-     * @var Permission
-     */
-    public $permissions;
-
-    /**
-     * @var Settings
-     */
-    public $appSettings;
 }

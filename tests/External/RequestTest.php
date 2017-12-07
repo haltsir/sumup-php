@@ -60,9 +60,6 @@ class RequestTest extends TestCase
         $this->assertEquals('OK', $response->getReasonPhrase());
     }
 
-    /**
-     * @group testing
-     */
     public function testShouldFailToSandRequestAndThrowRequestException()
     {
         $this->client->expects($this->once())
