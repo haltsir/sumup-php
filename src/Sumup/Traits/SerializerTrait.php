@@ -11,11 +11,20 @@ trait SerializerTrait
      */
     public function serialize()
     {
-        if (false === defined('self::MAP_ENTITY_TO_JSON')) {
-            return $this;
+        if (defined('self::MAP_ENTITY_TO_JSON')) {
+            return json_encode($this->serializeMap($this, self::MAP_ENTITY_TO_JSON));
         }
 
-        return json_encode($this->serializeMap($this, self::MAP_ENTITY_TO_JSON));
+        $target = [];
+        foreach (array_keys(get_object_vars($this)) as $entityProperty) {
+            $key = camelCaseToSnakeCase($entityProperty);
+            if (null !== $this->$entityProperty) {
+                $target[$key] = $this->$entityProperty;
+            }
+            continue;
+        }
+
+        return json_encode($target);
     }
 
     /**
@@ -32,7 +41,9 @@ trait SerializerTrait
         foreach (array_keys(get_object_vars($object)) as $entityProperty) {
             if (!array_key_exists($entityProperty, $map)) {
                 $key = camelCaseToSnakeCase($entityProperty);
-                $target[$key] = $object->$entityProperty;
+                if (null !== $object->$entityProperty) {
+                    $target[$key] = $object->$entityProperty;
+                }
                 continue;
             }
 
@@ -41,8 +52,10 @@ trait SerializerTrait
             $itemType = $propertyMap['type'] ?? 'string';
 
             if (false === strpos($itemKey, '.')) {
-                $target[$itemKey] =
-                    $this->serializeValue($itemType, $object->$entityProperty, $object, $entityProperty);
+                $value = $this->serializeValue($itemType, $object->$entityProperty, $object, $entityProperty);
+                if (null !== $value) {
+                    $target[$itemKey] = $value;
+                }
                 continue;
             }
 
@@ -53,7 +66,17 @@ trait SerializerTrait
                 $variableBuilder =& $variableBuilder[$key];
             }
 
-            $variableBuilder = $this->serializeValue($itemType, $object->$entityProperty, $object, $entityProperty);
+            $variableBuilderValue = $this->serializeValue(
+                $itemType,
+                $object->$entityProperty,
+                $object,
+                $entityProperty
+            );
+            if (null !== $variableBuilderValue) {
+                $variableBuilder = $variableBuilderValue;
+            } else {
+                unset($target[$itemKey]);
+            }
         }
 
         return $target;
