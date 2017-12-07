@@ -9,7 +9,7 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
-use Sumup\Api\Model\Employee\Employee;
+use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
@@ -159,7 +159,7 @@ class SumupContainer extends Container implements ContainerInterface
 
         /* Operator */
         $this['operator.model'] = $this->factory(function () {
-            return new Employee();
+            return new Operator();
         });
 
         $this['operator.factory'] = $this->factory(function ($container) {

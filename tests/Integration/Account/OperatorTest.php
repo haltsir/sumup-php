@@ -8,6 +8,7 @@ use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
 use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
+use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Repository\Collection;
 use Sumup\Api\Service\Account\OperatorService;
 use Sumup\Api\Service\Exception\InvalidArgumentException;
@@ -81,7 +82,7 @@ class OperatorTest extends TestCase
     public function testCreateSubAccount()
     {
         $subAcc = $this->operatorService->create(['username' => $this->username, 'password' => $this->password]);
-        $this->assertInstanceOf(Employee::class, $subAcc);
+        $this->assertInstanceOf(Operator::class, $subAcc);
         $this->assertEquals($this->username, $subAcc->username);
         $this->assertTrue(property_exists($subAcc, 'id'));
     }

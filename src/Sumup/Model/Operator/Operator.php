@@ -1,18 +1,13 @@
 <?php
 
-namespace Sumup\Api\Model\Employee;
+namespace Sumup\Api\Model\Operator;
 
 use Sumup\Api\Traits\HydratorTrait;
 use Sumup\Api\Traits\SerializerTrait;
 
-class Employee
+class Operator
 {
     use HydratorTrait, SerializerTrait;
-
-    const MAP_JSON_TO_ENTITY
-        = [
-            'createdAt' => ['path' => 'created_at']
-        ];
 
     /**
      * @var int

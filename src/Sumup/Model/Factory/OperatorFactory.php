@@ -3,13 +3,13 @@
 namespace Sumup\Api\Model\Factory;
 
 
-use Sumup\Api\Model\Employee\Employee;
+use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Repository\Collection;
 
 class OperatorFactory extends FactoryAbstract implements FactoryInterface
 {
     /**
-     * @var Employee
+     * @var Operator
      */
     protected $model;
 
@@ -18,7 +18,7 @@ class OperatorFactory extends FactoryAbstract implements FactoryInterface
      */
     protected $collection;
 
-    public function __construct(Employee $model, Collection $collection)
+    public function __construct(Operator $model, Collection $collection)
     {
         $this->model = $model;
         $this->collection = $collection;
