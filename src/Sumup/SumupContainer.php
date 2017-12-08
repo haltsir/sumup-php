@@ -10,12 +10,14 @@ use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
 use Sumup\Api\Model\Operator\Operator;
+use Sumup\Api\Model\Factory\BankAccountFactory;
 use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Model\Factory\OperatorFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
+use Sumup\Api\Model\Merchant\BankAccount;
 use Sumup\Api\Model\Merchant\Business;
 use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\Model\Merchant\Profile;
@@ -24,6 +26,7 @@ use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
+use Sumup\Api\Service\Merchant\BankAccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\Service\Account\OperatorService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
@@ -167,13 +170,24 @@ class SumupContainer extends Container implements ContainerInterface
         });
 
         $this['operator.service'] = $this->factory(function ($container) {
-            return new OperatorService($container['operator.factory'],
-                                         $container['collection'],
-                                         $container['validator.required_arguments'],
-                                         $container['http.request'],
-                                         $container['configuration'], $container['oauth.client']);
+            return new OperatorService($container['operator.factory'], $container['collection'],
+                                       $container['validator.required_arguments'], $container['http.request'],
+                                       $container['configuration'], $container['oauth.client']);
         });
 
+
+        /* Bank Account */
+        $this['bank_account.model'] = $this->factory(function () {
+            return new BankAccount();
+        });
+        $this['bank_account.factory'] = $this->factory(function ($container) {
+            return new BankAccountFactory($container['bank_account.model'], $container['collection']);
+        });
+        $this['bank_account.service'] = $this->factory(function ($container) {
+            return new BankAccountService($container['configuration'], $container['oauth.client'],
+                                          $container['http.request'], $container['bank_account.factory'],
+                                          $container['validator.required_arguments']);
+        });
     }
 
     /**
