@@ -103,10 +103,12 @@ class BankAccountService extends SumupService
             throw new RequiredArgumentException('Missing required data provided to ' . __CLASS__);
         }
 
+        $bankAccount = $this->bankAccountFactory->create()->hydrate($data);
+
         $request = $this->request->setMethod('POST')
                                  ->setUri($this->configuration->getFullEndpoint() .
                                           '/me/merchant-profile/bank-accounts')
-                                 ->setBody($data);
+                                 ->setJson($bankAccount->serialize());
 
         /** @var ResponseInterface $response */
         $response = $this->client->request($request);
