@@ -7,7 +7,7 @@ use Sumup\Api\Traits\SerializerTrait;
 
 class Profile
 {
-    use HydratorTrait,SerializerTrait;
+    use HydratorTrait, SerializerTrait;
 
     const MAP_JSON_TO_ENTITY = [
             'firstName' => ['path' => 'personal_profile.first_name'],
@@ -22,16 +22,16 @@ class Profile
         ];
 
     const MAP_ENTITY_TO_JSON = [
-        'firstName' => ['path' => 'first_name'],
-        'lastName' => ['path' => 'last_name'],
-        'dateOfBirth' => ['path' => 'date_of_birth'],
-        'mobilePhone' => ['path' => 'mobile_phone'],
-        'nationalId' => ['path' => 'national_id'],
-        'address' => [
-            'path' => 'address',
-            'type' => Address::class
-        ],
-    ];
+            'firstName' => ['path' => 'first_name'],
+            'lastName' => ['path' => 'last_name'],
+            'dateOfBirth' => ['path' => 'date_of_birth'],
+            'mobilePhone' => ['path' => 'mobile_phone'],
+            'nationalId' => ['path' => 'national_id'],
+            'address' => [
+                'path' => 'address',
+                'type' => Address::class
+            ],
+        ];
 
     /**
      * @var string
