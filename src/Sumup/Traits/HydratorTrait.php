@@ -81,7 +81,6 @@ trait HydratorTrait
         $keys = explode('.', $path);
         foreach ($keys as $key) {
             if (!isset($value[$key])) {
-
                 return null;
             }
             $value = $value[$key];

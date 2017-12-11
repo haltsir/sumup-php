@@ -61,7 +61,7 @@ class PersonalProfileTest extends TestCase
                     "company" => "test-co"
                 ]];
 
-            $this->personalProfileService->create($personalProfile);
+            $result = $this->personalProfileService->create($personalProfile);
         }
 
         $this->assertInstanceOf(Profile::class, $result);
