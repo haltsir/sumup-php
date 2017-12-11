@@ -109,7 +109,7 @@ class SumupContainer extends Container implements ContainerInterface
             return new Profile();
         });
         $this['personal_profile.service'] = $this->factory(function ($container) {
-            return new PersonalProfileService($container['profile.model'], $container['http.request'],
+            return new PersonalProfileService($container['profile.model'],$container['validator.required_arguments'], $container['http.request'],
                                               $container['configuration'], $container['oauth.client']);
         });
 
