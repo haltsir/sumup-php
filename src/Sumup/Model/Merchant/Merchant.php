@@ -2,6 +2,7 @@
 
 namespace Sumup\Api\Model\Merchant;
 
+use Sumup\Api\Model\Payout\Settings;
 use Sumup\Api\Traits\HydratorTrait;
 use Sumup\Api\Traits\SerializerTrait;
 
