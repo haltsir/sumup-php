@@ -1,18 +1,23 @@
 <?php
 
-namespace Sumup\Api\Model\Merchant;
+namespace Sumup\Api\Model\Payout;
+
+use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
 class BankAccount
 {
-    /**
-     * @var string
-     */
-    public $bank_code;
+    use HydratorTrait, SerializerTrait;
 
     /**
      * @var string
      */
-    public $branch_code;
+    public $bankCode;
+
+    /**
+     * @var string
+     */
+    public $branchCode;
 
     /**
      * @var string

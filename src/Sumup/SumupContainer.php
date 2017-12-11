@@ -27,6 +27,7 @@ use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
+use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\Service\App\AppSettingsService;
 use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
@@ -111,7 +112,7 @@ class SumupContainer extends Container implements ContainerInterface
             return new Profile();
         });
         $this['personal_profile.service'] = $this->factory(function ($container) {
-            return new PersonalProfileService($container['profile.model'], $container['http.request'],
+            return new PersonalProfileService($container['profile.model'],$container['validator.required_arguments'], $container['http.request'],
                                               $container['configuration'], $container['oauth.client']);
         });
 
@@ -174,10 +175,8 @@ class SumupContainer extends Container implements ContainerInterface
         });
 
         $this['operator.service'] = $this->factory(function ($container) {
-            return new OperatorService($container['operator.factory'],
-                                       $container['collection'],
-                                       $container['validator.required_arguments'],
-                                       $container['http.request'],
+            return new OperatorService($container['operator.factory'], $container['collection'],
+                                       $container['validator.required_arguments'], $container['http.request'],
                                        $container['configuration'], $container['oauth.client']);
         });
 

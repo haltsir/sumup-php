@@ -7,6 +7,7 @@ use Sumup\Api\Configuration\ConfigurationInterface;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Merchant\Profile;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
+use Sumup\Api\Service\Exception\InvalidArgumentException;
 use Sumup\Api\Service\SumupService;
 
 class PersonalProfileService extends SumupService
@@ -15,44 +16,59 @@ class PersonalProfileService extends SumupService
     /**
      * @var Profile
      */
-    protected $profileModel;
+    private $profileModel;
 
     /**
      * @var Request
      */
-    protected $request;
+    private $request;
 
     /**
      * @var ConfigurationInterface
      */
-    protected $configuration;
+    private $configuration;
 
     /**
      * @var OAuthClientInterface
      */
-    protected $client;
+    private $client;
+
+    /**
+     * @var string
+     */
+    private $requiredArgumentsValidator;
+
+    const REQUIRED_ARGS = ["first_name", "last_name", "date_of_birth", "address"];
 
     /**
      * PersonalProfileService constructor.
-     * @param profile $profile
+     * @param Profile $profile
+     * @param string $requiredArgumentsValidator
      * @param Request $request
      * @param ConfigurationInterface $configuration
      * @param OAuthClientInterface $client
      */
-    public function __construct(Profile $profile, Request $request,
-                                ConfigurationInterface $configuration, OAuthClientInterface $client)
+    public function __construct(Profile $profile, string $requiredArgumentsValidator,
+                                Request $request,
+                                ConfigurationInterface $configuration,
+                                OAuthClientInterface $client)
     {
+
         $this->profileModel = $profile;
+        $this->requiredArgumentsValidator = $requiredArgumentsValidator;
         $this->request = $request;
         $this->configuration = $configuration;
         $this->client = $client;
     }
 
-
+    /**
+     * Get Personal Profile
+     * @return mixed
+     */
     public function get()
     {
         $request = $this->request->setMethod('GET')
-                                 ->setUri($this->configuration->getFullEndpoint() . '/me/personal-profile');
+                                 ->setUri($this->configuration->getFullEndpoint() . '/me');
 
         /** @var ResponseInterface $response */
         $response = $this->client->request($request);
@@ -60,12 +76,30 @@ class PersonalProfileService extends SumupService
         return $this->profileModel->hydrate(json_decode((string)$response->getBody(), true));
     }
 
-//    public function update($body)
-//    {
-//        $request = (new Request())->setMethod('PUT')
-//                                  ->setUri($this->configuration->getFullEndpoint() . '/me/personal-profile')
-//                                  ->setBody($body);
-//
-//        $response = $this->client->request($request);
-//    }
+    /**
+     * Create Personal Profile
+     *
+     * @param array $body
+     * @return mixed
+     * @throws InvalidArgumentException
+     */
+    public function create(array $body)
+    {
+        $profile = $this->profileModel
+            ->hydrate($body);
+
+        if (false === $this->requiredArgumentsValidator::validate($body, self::REQUIRED_ARGS)) {
+            throw new InvalidArgumentException('Missing required data provided to ' . __CLASS__);
+        }
+
+        $request = $this->request->setMethod('PUT')
+                                 ->setUri($this->configuration->getFullEndpoint() .
+                                          '/me/personal-profile')
+                                 ->setJson($profile->serialize());
+
+        $response = $this->client->request($request);
+        return $profile->hydrate(json_decode((string)$response->getBody(), true));
+
+    }
+
 }

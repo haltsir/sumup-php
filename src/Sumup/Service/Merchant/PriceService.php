@@ -2,10 +2,8 @@
 
 namespace Sumup\Api\Service\Merchant;
 
-use GuzzleHttp\Exception\ClientException;
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\ConfigurationInterface;
-use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Factory\PriceFactory;
