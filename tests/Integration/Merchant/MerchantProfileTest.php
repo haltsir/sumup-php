@@ -33,14 +33,15 @@ class MerchantProfileTest extends TestCase
 
     /**
      * Test cannot be completed due to API bug.
-     *
+     */
     public function testUpdate()
     {
+        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
+
         $client = new SumupClient($this->configuration);
         $merchantProfileService = $client->createService('merchant.profile');
 
         $merchant = $merchantProfileService->get();
         $result = $merchantProfileService->update($merchant);
     }
-    */
 }
