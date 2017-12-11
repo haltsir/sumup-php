@@ -17,16 +17,17 @@ use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Model\Factory\OperatorFactory;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
-use Sumup\Api\Model\Merchant\BankAccount;
+use Sumup\Api\Model\Payout\BankAccount;
 use Sumup\Api\Model\Merchant\Business;
 use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\Model\Merchant\Profile;
+use Sumup\Api\Model\Payout\Settings;
 use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
-use Sumup\Api\Service\Merchant\BankAccountService;
+use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\Service\Account\OperatorService;
 use Sumup\Api\Service\Merchant\MerchantProfileService;
@@ -34,6 +35,7 @@ use Sumup\Api\Service\Account\PersonalProfileService;
 use Sumup\Api\Service\Merchant\PriceService;
 use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
+use Sumup\Api\Service\Payout\SettingsService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 
@@ -187,6 +189,15 @@ class SumupContainer extends Container implements ContainerInterface
             return new BankAccountService($container['configuration'], $container['oauth.client'],
                                           $container['http.request'], $container['bank_account.factory'],
                                           $container['validator.required_arguments']);
+        });
+
+        /* Payout Settings */
+        $this['payout.settings.model'] = $this->factory(function () {
+            return new Settings();
+        });
+        $this['payout.settings.service'] = $this->factory(function ($container) {
+            return new SettingsService($container['configuration'], $container['oauth.client'],
+                                       $container['http.request'], $container['payout.settings.model']);
         });
     }
 

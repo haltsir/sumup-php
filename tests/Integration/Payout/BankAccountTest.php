@@ -1,14 +1,15 @@
 <?php
 
-namespace Sumup\Api\Service\Merchant;
+namespace Integration\Payout;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
-use Sumup\Api\Model\Merchant\BankAccount;
+use Sumup\Api\Model\Payout\BankAccount;
 use Sumup\Api\Repository\Collection;
+use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\SumupClient;
 
 class BankAccountTest extends TestCase
