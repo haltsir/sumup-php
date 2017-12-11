@@ -2,7 +2,7 @@
 
 namespace Sumup\Api\Model\Factory;
 
-use Sumup\Api\Model\Merchant\BankAccount;
+use Sumup\Api\Model\Payout\BankAccount;
 use Sumup\Api\Repository\Collection;
 
 class BankAccountFactory extends FactoryAbstract implements FactoryInterface

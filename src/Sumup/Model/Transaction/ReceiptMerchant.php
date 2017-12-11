@@ -3,7 +3,7 @@
 namespace Sumup\Api\Model\Transaction;
 
 use Sumup\Api\Model\Merchant\LegalType;
-use Sumup\Api\Model\Merchant\Settings;
+use Sumup\Api\Model\Payout\Settings;
 
 class ReceiptMerchant
 {

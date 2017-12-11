@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumup\Api\Model\Merchant;
+namespace Sumup\Api\Model\Payout;
 
 use Sumup\Api\Traits\HydratorTrait;
 use Sumup\Api\Traits\SerializerTrait;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumup\Api\Service\Merchant;
+namespace Sumup\Api\Service\Payout;
 
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\ConfigurationInterface;

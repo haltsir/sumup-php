@@ -1,9 +1,14 @@
 <?php
 
-namespace Sumup\Api\Model\Merchant;
+namespace Sumup\Api\Model\Payout;
+
+use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
 class Settings
 {
+    use HydratorTrait, SerializerTrait;
+
     /**
      * @var bool
      */
