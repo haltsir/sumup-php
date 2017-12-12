@@ -13,6 +13,8 @@ class MerchantProfileTest extends TestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
+
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $this->configuration = new Configuration();
@@ -36,8 +38,6 @@ class MerchantProfileTest extends TestCase
      */
     public function testUpdate()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $client = new SumupClient($this->configuration);
         $merchantProfileService = $client->createService('merchant.profile');
 

@@ -20,6 +20,8 @@ class PersonalProfileTest extends TestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
+
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $configuration = new Configuration();
@@ -36,11 +38,10 @@ class PersonalProfileTest extends TestCase
         }
 
     }
+
 //TODO find a way to create personal profile with the same country, post code and landline as merchant
     public function testCall()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $result = $this->personalProfileService->get();
 
         if (!($result instanceof Profile)) {

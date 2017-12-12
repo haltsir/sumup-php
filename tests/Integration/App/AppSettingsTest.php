@@ -30,7 +30,7 @@ class AppSettingsTest extends TestCase
 
         try {
             $this->client = new SumupClient($configuration);
-            $this->appSettingsService = $this->client->createService('app_settings');
+            $this->appSettingsService = $this->client->createService('app.settings');
         } catch (SumupClientException $clientException) {
             $this->fail($clientException->getMessage());
         }
@@ -43,9 +43,6 @@ class AppSettingsTest extends TestCase
         $this->assertInstanceOf(Settings::class, $appSettings);
     }
 
-    /**
-     * @group testing
-     */
     public function testUpdateAppSettings()
     {
         $data = [

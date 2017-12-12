@@ -204,14 +204,14 @@ class SumupContainer extends Container implements ContainerInterface
         });
 
         /* App Settings */
-        $this['app_settings.model'] = $this->factory(function () {
+        $this['app.settings.model'] = $this->factory(function () {
             return new AppSettings();
 
         });
 
-        $this['app_settings.service'] = $this->factory(function ($container) {
+        $this['app.settings.service'] = $this->factory(function ($container) {
             return new AppSettingsService($container['configuration'], $container['oauth.client'],
-                                          $container['http.request'], $container['app_settings.model']);
+                                          $container['http.request'], $container['app.settings.model']);
         });
 
 

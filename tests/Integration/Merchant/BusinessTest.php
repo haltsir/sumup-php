@@ -28,6 +28,8 @@ class BusinessTest extends TestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
+
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $this->configuration = new Configuration();
@@ -48,8 +50,6 @@ class BusinessTest extends TestCase
 // TODO find a way to create business address with the same country as personal profile and set post code and landline for this country
     public function testBusiness()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $business = $this->businessService->get();
 
         $data = [

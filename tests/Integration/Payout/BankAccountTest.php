@@ -31,6 +31,8 @@ class BankAccountTest extends TestCase
 
     public function setUp()
     {
+        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
+
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $this->configuration = new Configuration();
@@ -49,8 +51,6 @@ class BankAccountTest extends TestCase
 
     public function testCreateBankAccount()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $bankAccount = $this->bankAccountService->create(
             [
                 'bank_code' => '40-48-65',
@@ -66,8 +66,6 @@ class BankAccountTest extends TestCase
 
     public function testListBankAccounts()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $accounts = $this->bankAccountService->all();
         $this->assertInstanceOf(Collection::class, $accounts);
         $items = $accounts->all();
@@ -84,8 +82,6 @@ class BankAccountTest extends TestCase
 
     public function testPrimaryBankAccount()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $bankAccount = $this->bankAccountService->primary();
         $this->assertTrue($bankAccount->primary);
     }
