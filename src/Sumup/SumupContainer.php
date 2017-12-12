@@ -27,6 +27,7 @@ use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
+use Sumup\Api\Service\App\AppSettingsService;
 use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\Service\Account\OperatorService;
@@ -38,6 +39,7 @@ use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Service\Payout\SettingsService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
+use Sumup\Api\Model\Mobile\Settings as AppSettings;
 
 class SumupContainer extends Container implements ContainerInterface
 {
@@ -109,7 +111,8 @@ class SumupContainer extends Container implements ContainerInterface
             return new Profile();
         });
         $this['personal_profile.service'] = $this->factory(function ($container) {
-            return new PersonalProfileService($container['profile.model'],$container['validator.required_arguments'], $container['http.request'],
+            return new PersonalProfileService($container['profile.model'], $container['validator.required_arguments'],
+                                              $container['http.request'],
                                               $container['configuration'], $container['oauth.client']);
         });
 
@@ -199,6 +202,19 @@ class SumupContainer extends Container implements ContainerInterface
             return new SettingsService($container['configuration'], $container['oauth.client'],
                                        $container['http.request'], $container['payout.settings.model']);
         });
+
+        /* App Settings */
+        $this['app.settings.model'] = $this->factory(function () {
+            return new AppSettings();
+
+        });
+
+        $this['app.settings.service'] = $this->factory(function ($container) {
+            return new AppSettingsService($container['configuration'], $container['oauth.client'],
+                                          $container['http.request'], $container['app.settings.model']);
+        });
+
+
     }
 
     /**
