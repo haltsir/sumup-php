@@ -5,8 +5,7 @@ namespace Sumup\Api\Http;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
-use Sumup\Api\Http\Exception\RequestException;
-
+use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 class Request
 {
     /**
@@ -132,7 +131,6 @@ class Request
     /**
      * @param array $options
      * @return mixed|\Psr\Http\Message\ResponseInterface
-     * @throws RequestException
      */
     public function send(array $options = [])
     {
@@ -146,16 +144,7 @@ class Request
         try {
             return $this->httpClient->request($this->getMethod(), $this->getUri(), $options);
         } catch (ClientException $clientException) {
-
-            $response = $clientException->getResponse();
-            $content = json_decode((string)$response->getBody());
-
-            if (empty($content) || !property_exists($content, 'message')) {
-                throw new RequestException((string)$response->getBody());
-            }
-
-            throw new RequestException($content->message);
+            (new RequestExceptionFactory())->createFromClientException($clientException);
         }
-
     }
 }

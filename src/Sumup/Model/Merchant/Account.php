@@ -15,7 +15,7 @@ class Account
         'mobilePhone' => ['path' => 'personal_profile.mobile_phone'],
         'nationalId' => ['path' => 'personal_profile.national_id'],
         'address' => [
-            'path' => 'personal_profile.address',
+            'path' => 'merchant_profile.address',
             'type' => Address::class
         ]
     ];
