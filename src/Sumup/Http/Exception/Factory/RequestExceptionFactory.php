@@ -4,7 +4,7 @@ namespace Sumup\Api\Http\Exception\Factory;
 
 use GuzzleHttp\Exception\ClientException;
 use Sumup\Api\Errors\ApiError;
-use Sumup\Api\Errors\ApiErrorsContainer;
+use Sumup\Api\Errors\ApiErrorContainer;
 use Sumup\Api\Http\Exception\MultipleRequestExceptions;
 use Sumup\Api\Http\Exception\UnknownRequestException;
 
@@ -71,7 +71,7 @@ class RequestExceptionFactory
 
     /**
      * @param array $errors
-     * @return ApiErrorsContainer
+     * @return ApiErrorContainer
      */
     private function getErrors(array $errors)
     {
@@ -81,7 +81,7 @@ class RequestExceptionFactory
             $errorsArray[] = $this->formatError($error);
         }
 
-        return new ApiErrorsContainer($errorsArray);
+        return new ApiErrorContainer($errorsArray);
 
     }
 

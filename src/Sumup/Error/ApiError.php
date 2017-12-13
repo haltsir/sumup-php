@@ -6,9 +6,9 @@ namespace Sumup\Api\Errors;
 class ApiError
 {
     /**
-     * @var string $error_code
+     * @var string $errorCode
      */
-    public $error_code;
+    public $errorCode;
     /**
      * @var string $param
      */
@@ -20,13 +20,13 @@ class ApiError
 
     /**
      * ApiError constructor.
-     * @param $error_code
+     * @param $errorCode
      * @param $param
      * @param $message
      */
-    public function __construct($error_code, $param, $message)
+    public function __construct($errorCode, $param, $message)
     {
-        $this->error_code = $error_code;
+        $this->errorCode = $errorCode;
         $this->param = $param;
         $this->message = $message;
     }

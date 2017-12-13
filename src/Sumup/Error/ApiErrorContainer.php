@@ -3,7 +3,7 @@
 namespace Sumup\Api\Errors;
 
 
-class ApiErrorsContainer implements \ArrayAccess, \Countable
+class ApiErrorContainer implements \ArrayAccess, \Countable
 {
     protected $items = [];
 
