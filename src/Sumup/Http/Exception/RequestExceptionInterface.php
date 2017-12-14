@@ -3,5 +3,6 @@
 namespace Sumup\Api\Http\Exception;
 interface RequestExceptionInterface
 {
-    public function getMessages();
+    public function getErrors();
+    public function getError();
 }

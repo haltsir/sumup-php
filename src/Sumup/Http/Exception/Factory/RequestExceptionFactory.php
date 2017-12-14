@@ -3,32 +3,47 @@
 namespace Sumup\Api\Http\Exception\Factory;
 
 use GuzzleHttp\Exception\ClientException;
-use Sumup\Api\Errors\ApiError;
-use Sumup\Api\Errors\ApiErrorContainer;
+use Sumup\Api\Error\ApiError;
+use Sumup\Api\Error\ApiErrorContainer;
 use Sumup\Api\Http\Exception\MultipleRequestExceptions;
-use Sumup\Api\Http\Exception\UnknownRequestException;
+use Sumup\Api\Http\Exception\UnknownResponseException;
 
 class RequestExceptionFactory
 {
+    /**
+     * @var ApiError
+     */
+    protected $apiError;
+
+    /**
+     * @var ApiErrorContainer
+     */
+    protected $apiErrorContainer;
+
+    public function __construct(ApiError $apiError, ApiErrorContainer $apiErrorContainer)
+    {
+        $this->apiError = $apiError;
+        $this->apiErrorContainer = $apiErrorContainer;
+    }
+
     /**
      * Create exception from Guzzle Client Exception
      *
      * @param ClientException $clientException
      * @throws MultipleRequestExceptions
-     * @throws UnknownRequestException
+     * @throws UnknownResponseException
      */
     public function createFromClientException(ClientException $clientException)
     {
         $responseBody = $clientException->getResponse()->getBody();
 
         if (!$this->isValidJson($responseBody)) {
-            throw new UnknownRequestException($responseBody);
+            throw new UnknownResponseException($responseBody);
         }
 
         $errorsArray = $this->getResponseAsArray($responseBody);
 
         throw new MultipleRequestExceptions($this->getErrors($errorsArray));
-
     }
 
     /**
@@ -39,20 +54,16 @@ class RequestExceptionFactory
     {
         $result = json_decode((string)$response);
 
-        if (!is_array($result)) {
-            $result = [$result];
-        }
-
-        return $result;
+        return is_array($result) ? $result : [$result];
     }
 
     /**
-     * @param $strJson
+     * @param string $json
      * @return bool
      */
-    private function isValidJson($strJson)
+    private function isValidJson(string $json = null)
     {
-        json_decode($strJson);
+        json_decode($json);
         return (json_last_error() === JSON_ERROR_NONE);
     }
 
@@ -62,11 +73,10 @@ class RequestExceptionFactory
      */
     private function formatError(\stdClass $error)
     {
-        return new ApiError(
-            $this->propertyChecker($error, 'error_code'),
-            $this->propertyChecker($error, 'param'),
-            $this->propertyChecker($error, 'message')
-        );
+        return $this->apiError
+            ->setMessage(property_exists($error, 'message') ? $error->message : null)
+            ->setParam(property_exists($error, 'param') ? $error->param : null)
+            ->setErrorCode(property_exists($error, 'error_code') ? $error->error_code : null);
     }
 
     /**
@@ -80,24 +90,7 @@ class RequestExceptionFactory
         foreach ($errors as $error) {
             $errorsArray[] = $this->formatError($error);
         }
-
-        return new ApiErrorContainer($errorsArray);
-
+        return $this->apiErrorContainer->createFromArray($errorsArray);
     }
 
-    /**
-     * Check if object property exists and return it's value or null
-     *
-     * @param $obj
-     * @param $property
-     * @return null
-     */
-    private function propertyChecker($obj, $property)
-    {
-        if (property_exists($obj, $property)) {
-            return $obj->$property;
-        }
-
-        return null;
-    }
 }

@@ -33,9 +33,15 @@ class Request
      */
     protected $httpClient;
 
-    public function __construct(ClientInterface $httpClient)
+    /**
+     * @var RequestExceptionFactory
+     */
+    protected $requestExceptionFactory;
+
+    public function __construct(ClientInterface $httpClient, RequestExceptionFactory $requestExceptionFactory)
     {
         $this->httpClient = $httpClient;
+        $this->requestExceptionFactory = $requestExceptionFactory;
     }
 
     /**
@@ -144,7 +150,7 @@ class Request
         try {
             return $this->httpClient->request($this->getMethod(), $this->getUri(), $options);
         } catch (ClientException $clientException) {
-            (new RequestExceptionFactory())->createFromClientException($clientException);
+            $this->requestExceptionFactory->createFromClientException($clientException);
         }
     }
 }

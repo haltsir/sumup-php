@@ -1,17 +1,11 @@
 <?php
 
-namespace Sumup\Api\Errors;
+namespace Sumup\Api\Error;
 
 
 class ApiErrorContainer implements \ArrayAccess, \Countable
 {
     protected $items = [];
-
-
-    public function __construct($items)
-    {
-        $this->items = $items;
-    }
 
     /**
      * Whether a offset exists
@@ -97,5 +91,26 @@ class ApiErrorContainer implements \ArrayAccess, \Countable
     public function all()
     {
         return $this->items;
+    }
+
+    /**
+     * @param array $data
+     * @return ApiErrorContainer
+     */
+    public function createFromArray(array $data)
+    {
+        foreach ($data as $key => $item) {
+            $this->items[$key] = $item;
+        }
+        return $this;
+    }
+
+    /**
+     *  Get first element
+     * @return mixed
+     */
+    public function first()
+    {
+        return reset($this->items);
     }
 }

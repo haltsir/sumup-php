@@ -3,16 +3,35 @@
 namespace Unit\Http;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use PHPUnit\Framework\TestCase;
+use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 use Sumup\Api\Http\Request;
 
 class RequestTest extends TestCase
 {
-    public $request;
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject | Client
+     */
+    protected $client;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject | RequestExceptionFactory
+     */
+    protected $requestExceptionFactory;
+
+    protected $request;
 
     public function setUp()
     {
-        $this->request = new Request(new Client());
+        $this->client = $this->getMockBuilder(ClientInterface::class)
+                             ->getMock();
+
+        $this->requestExceptionFactory = $this->getMockBuilder(RequestExceptionFactory::class)
+                                              ->disableOriginalConstructor()->getMock();
+
+
+        $this->request = new Request($this->client, $this->requestExceptionFactory);
     }
 
     public function testDefaultMethod()

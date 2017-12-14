@@ -9,6 +9,9 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
+use Sumup\Api\Error\ApiError;
+use Sumup\Api\Error\ApiErrorContainer;
+use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Model\Factory\BankAccountFactory;
 use Sumup\Api\Model\Factory\PriceFactory;
@@ -55,8 +58,21 @@ class SumupContainer extends Container implements ContainerInterface
         $this['http.client'] = $this->factory(function () {
             return new Client();
         });
+
+        $this['api_error'] = $this->factory(function () {
+            return new ApiError();
+        });
+
+        $this['api_error_container'] = $this->factory(function () {
+            return new ApiErrorContainer();
+        });
+
+        $this['request_exception_factory'] = $this->factory(function ($container) {
+            return new RequestExceptionFactory($container['api_error'], $container['api_error_container']);
+        });
+
         $this['http.request'] = $this->factory(function ($container) {
-            return new Request($container['http.client']);
+            return new Request($container['http.client'], $container['request_exception_factory']);
         });
 
         /* Validators */
