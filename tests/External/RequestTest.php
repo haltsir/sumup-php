@@ -70,7 +70,7 @@ class RequestTest extends TestCase
         $this->assertEquals('OK', $response->getReasonPhrase());
     }
 
-    public function testShouldFailToSandRequestAndThrowRequestExceptionWithInvalidParams()
+    public function testShouldFailToSendRequestAndThrowRequestExceptionWithInvalidParams()
     {
         $this->client
             ->expects($this->once())
