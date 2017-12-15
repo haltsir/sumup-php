@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Payout;
+namespace Tests\Integration\Payout;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;

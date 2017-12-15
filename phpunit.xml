@@ -17,4 +17,7 @@
             <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
+    <listeners>
+        <listener class="Tests\TestListener" file="./tests/TestListener.php"></listener>
+    </listeners>
 </phpunit>

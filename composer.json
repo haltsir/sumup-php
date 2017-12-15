@@ -24,7 +24,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Sumup\\Api\\": "src/Sumup"
+            "Sumup\\Api\\": "src/Sumup",
+            "Tests\\" : "tests"
         },
         "files": [
             "src/Sumup/Support/helpers.php",

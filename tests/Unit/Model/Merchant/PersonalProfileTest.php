@@ -1,5 +1,7 @@
 <?php
 
+namespace Tests\Unit\Model\Merchant;
+
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Model\Merchant\Profile;
 use Sumup\Api\Model\Merchant\Address;

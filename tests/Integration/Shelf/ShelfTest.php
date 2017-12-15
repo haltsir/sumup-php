@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Shelf;
+namespace Tests\Integration\Shelf;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
@@ -126,7 +126,6 @@ class ShelfTest extends TestCase
     {
         $shelf = $this->shelfService->create(['name' => 'test shelf']);
         $this->assertTrue($this->shelfService->delete($shelf->id));
-
         $this->expectException(RequestException::class);
         $this->shelfService->get($shelf->id);
     }

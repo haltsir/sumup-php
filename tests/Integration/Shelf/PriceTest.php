@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Shelf;
+namespace Tests\Integration\Shelf;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Security\OAuth2;
+namespace Tests\Unit\Security\OAuth2;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;

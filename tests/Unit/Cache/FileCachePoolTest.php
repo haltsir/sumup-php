@@ -1,5 +1,5 @@
 <?php
-
+namespace Tests\Unit\Cache;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Cache\File\FileCacheItemPool;
 

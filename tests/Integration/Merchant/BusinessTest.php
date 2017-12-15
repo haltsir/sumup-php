@@ -1,11 +1,12 @@
 <?php
 
-namespace Integration\Merchant;
+namespace Tests\Integration\Merchant;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
+use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\SumupClient;
 
@@ -28,8 +29,6 @@ class BusinessTest extends TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $this->configuration = new Configuration();
@@ -47,7 +46,6 @@ class BusinessTest extends TestCase
         }
     }
 
-// TODO find a way to create business address with the same country as personal profile and set post code and landline for this country
     public function testBusiness()
     {
         $business = $this->businessService->get();
@@ -57,24 +55,25 @@ class BusinessTest extends TestCase
             'email' => 'test.business@sumup.com',
             'address' => [
                 'address_line1' => 'Test Address Line 1',
-                'city' => 'London',
+                'city' => 'Issaquah',
                 'country' => 'US',
                 "post_code" => "90001",
-                "landline" => "2345678910",
-                'region_id' => 16
+                "landline" => "425-877-5910",
+                'region_id' => 480
             ]
         ];
+
         $this->assertTrue($this->businessService->update($data));
 
         $updateData = [
             'business_name' => 'Updated Test Business',
             'address' => [
                 'address_line1' => 'Updated Test Address Line 1',
-                'city' => 'Updated Test City',
-                'country' => 'GB',
-                'post_code' => 'EC2Y 9AK',
-                'landline' => '+442071387901',
-                'region_id' => 434
+                'city' => 'Seattle',
+                'country' => 'US',
+                'post_code' => '90001',
+                'landline' => '425-877-5913',
+                'region_id' => 480
             ]
         ];
         $this->businessService->update($updateData);

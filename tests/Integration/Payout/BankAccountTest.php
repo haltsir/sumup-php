@@ -1,11 +1,12 @@
 <?php
 
-namespace Integration\Payout;
+namespace Tests\Integration\Payout;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
+use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Model\Payout\BankAccount;
 use Sumup\Api\Repository\Collection;
@@ -31,7 +32,6 @@ class BankAccountTest extends TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
 
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
@@ -51,18 +51,38 @@ class BankAccountTest extends TestCase
 
     public function testCreateBankAccount()
     {
+        $bankAccount = $this->bankAccountService->all();
+
+        if ($bankAccount instanceof Collection) {
+            $this->markTestSkipped('Skip test. US User already have back Account');
+        }
+
         $bankAccount = $this->bankAccountService->create(
             [
-                'bank_code' => '40-48-65',
+                'bank_code' => '091000022',
                 'account_number' => 62136016,
                 'account_holder_name' => 'Test Testov',
                 'account_type' => 'SAVINGS'
             ]
         );
-        $this->assertEquals('404865', $bankAccount->bankCode);
+        $this->assertEquals('091000022', $bankAccount->bankCode);
         $this->assertEquals('62****16', $bankAccount->accountNumber);
         $this->assertEquals('Test Testov', $bankAccount->accountHolderName);
     }
+
+    public function testShouldThrowRequestExceptionIfUsUserHaveMoreThanOneBankAccount()
+    {
+        $data = ['bank_code' => '091000022',
+                 'account_number' => 62136016,
+                 'account_holder_name' => 'Test Testov',
+                 'account_type' => 'SAVINGS'];
+
+        $this->expectException(RequestException::class);
+
+        $this->bankAccountService->create($data);
+
+    }
+
 
     public function testListBankAccounts()
     {

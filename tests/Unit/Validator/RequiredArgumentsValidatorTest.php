@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Validator;
+namespace Tests\Unit\Validator;
 
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
