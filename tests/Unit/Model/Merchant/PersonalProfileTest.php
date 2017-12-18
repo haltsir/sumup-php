@@ -13,37 +13,36 @@ class PersonalProfileTest extends TestCase
     public function testShouldHydrateAddressModelWithMapArrayGiven()
     {
         $data = [
-            'personal_profile' =>
-                ['first_name' => 'testFirst',
-                 'last_name' => 'testLast',
-                 'date_of_birth' => '01-01-2011',
-                 'mobile_phone' => '0879803300',
-                 'national_id' => 'BG',
-                 'address' => [
-                     'address_line1' => 'addressLine1',
-                     'address_line2' => 'addressLine2',
-                     'city' => 'test_city',
-                     'country' => 'US',
-                     'region_id' => 1,
-                     'region_code' => 3000,
-                     'post_code' => 3001,
-                     'landline' => 1,
-                     'firstName' => 'testFirst',
-                     'lastName' => 'testLast',
-                     'company' => 'testC',
-                     'country_details' => [
-                         'currency' => 'lev',
-                         'iso_code' => 'BG',
-                         'en_name' => 'en_name_test',
-                         'native_name' => 'native_test'
-                     ],
-                     'timeoffset_details' => [
-                         'post_code' => '1000',
-                         'offset' => 1,
-                         'dst' => true
-                     ],
-                     'state_id' => '10',
-                 ]]
+            'first_name' => 'testFirst',
+            'last_name' => 'testLast',
+            'date_of_birth' => '01-01-2011',
+            'mobile_phone' => '0879803300',
+            'national_id' => 'BG',
+            'address' => [
+                'address_line1' => 'addressLine1',
+                'address_line2' => 'addressLine2',
+                'city' => 'test_city',
+                'country' => 'US',
+                'region_id' => 1,
+                'region_code' => 3000,
+                'post_code' => 3001,
+                'landline' => 1,
+                'firstName' => 'testFirst',
+                'lastName' => 'testLast',
+                'company' => 'testC',
+                'country_details' => [
+                    'currency' => 'lev',
+                    'iso_code' => 'BG',
+                    'en_name' => 'en_name_test',
+                    'native_name' => 'native_test'
+                ],
+                'timeoffset_details' => [
+                    'post_code' => '1000',
+                    'offset' => 1,
+                    'dst' => true
+                ],
+                'state_id' => '10',
+            ]
         ];
 
         $personalProfileModel = new Profile();

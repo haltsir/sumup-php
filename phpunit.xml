@@ -18,6 +18,6 @@
         </whitelist>
     </filter>
     <listeners>
-        <listener class="Tests\TestListener" file="./tests/TestListener.php"></listener>
+        <listener class="Tests\IntegrationTestsListener" file="./tests/IntegrationTestsListener.php"></listener>
     </listeners>
 </phpunit>

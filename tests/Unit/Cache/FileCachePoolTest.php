@@ -82,7 +82,7 @@ class FileCachePoolTest extends TestCase
         $pool = new FileCacheItemPool('/');
         $item = $pool->getItem('test-save-access');
         $item->set('test');
-        $this->expectException(ErrorException::class);
+        $this->expectException(\ErrorException::class);
         $pool->save($item);
     }
 

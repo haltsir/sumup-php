@@ -37,33 +37,37 @@ class PersonalProfileTest extends TestCase
 
     }
 
-    public function testCall()
+    public function testCreatePersonalProfile()
     {
-        $result = $this->personalProfileService->get();
-
-        if (!($result instanceof Profile)) {
-            $personalProfile = [
+        $personalProfile = [
+            "first_name" => "test_first_name",
+            "last_name" => "test_last_name",
+            "date_of_birth" => "08-06-1991",
+            "mobile_phone" => "+447700900518",
+            "address" => [
+                "address_line1" => "example test 1",
+                "address_line2" => "example test 2",
+                "city" => "london",
+                "country" => "GB",
+                "region_id" => 434,
+                "region_name" => "test name",
+                "post_code" => "EC1A 1BB",
+                "landline" => "+442071387901",
                 "first_name" => "test_first_name",
                 "last_name" => "test_last_name",
-                "date_of_birth" => "08-06-1991",
-                "mobile_phone" => "425-877-5910",
-                "address" => [
-                    "address_line1" => "example test 1",
-                    "address_line2" => "example test 2",
-                    "city" => "Seattle",
-                    "country" => "US",
-                    "region_id" => 480,
-                    "region_name" => "test name",
-                    "post_code" => "98029",
-                    "landline" => "425-877-5910",
-                    "first_name" => "test_first_name",
-                    "last_name" => "test_last_name",
-                    "company" => "test-co"
-                ]];
+                "company" => "test-co"
+            ]
+        ];
 
-            $result = $this->personalProfileService->create($personalProfile);
-        }
+        $result = $this->personalProfileService->create($personalProfile);
 
         $this->assertInstanceOf(Profile::class, $result);
+    }
+
+    public function testGetPersonalProfile()
+    {
+        $profile = $this->personalProfileService->get();
+
+        $this->assertInstanceOf(Profile::class, $profile);
     }
 } 

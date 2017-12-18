@@ -55,11 +55,11 @@ class BusinessTest extends TestCase
             'email' => 'test.business@sumup.com',
             'address' => [
                 'address_line1' => 'Test Address Line 1',
-                'city' => 'Issaquah',
-                'country' => 'US',
-                "post_code" => "90001",
-                "landline" => "425-877-5910",
-                'region_id' => 480
+                'city' => 'London',
+                'country' => 'GB',
+                "post_code" => "EC1A 1AT",
+                "landline" => "2345678910",
+                'region_id' => null
             ]
         ];
 
@@ -69,11 +69,11 @@ class BusinessTest extends TestCase
             'business_name' => 'Updated Test Business',
             'address' => [
                 'address_line1' => 'Updated Test Address Line 1',
-                'city' => 'Seattle',
-                'country' => 'US',
-                'post_code' => '90001',
-                'landline' => '425-877-5913',
-                'region_id' => 480
+                'city' => 'Updated Test City',
+                'country' => 'GB',
+                'post_code' => 'EC2Y 9AK',
+                'landline' => '+442071387901',
+                'region_id' => null
             ]
         ];
         $this->businessService->update($updateData);
