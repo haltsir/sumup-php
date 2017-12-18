@@ -48,8 +48,6 @@ class BusinessTest extends TestCase
 
     public function testBusiness()
     {
-        $business = $this->businessService->get();
-
         $data = [
             'business_name' => 'Test Business',
             'email' => 'test.business@sumup.com',
@@ -77,6 +75,8 @@ class BusinessTest extends TestCase
             ]
         ];
         $this->businessService->update($updateData);
+
+        $business = $this->businessService->get();
 
         $this->assertEquals($updateData['business_name'], $business->name);
         $this->assertEquals($updateData['address']['address_line1'], $business->address->addressLine1);

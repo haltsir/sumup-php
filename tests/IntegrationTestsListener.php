@@ -116,7 +116,7 @@ class IntegrationTestsListener extends TestSuite implements TestListener
         ];
     }
 
-    public function setUserEnv($response)
+    public function setUserEnv(\stdClass $response)
     {
         putenv('SUMUP_TEST_USERNAME=' . $response->account->username);
     }
