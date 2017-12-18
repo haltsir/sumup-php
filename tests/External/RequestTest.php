@@ -9,6 +9,8 @@ use GuzzleHttp\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
+use Sumup\Api\Http\Exception\MultipleRequestExceptions;
 use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Request;
 
@@ -27,6 +29,11 @@ class RequestTest extends TestCase
      */
     protected $exception;
 
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject | RequestExceptionFactory
+     */
+    protected $requestExceptionFactory;
+
 
     public function setUp()
     {
@@ -37,7 +44,10 @@ class RequestTest extends TestCase
 
         $this->httpRes = $this->getMockBuilder(ResponseInterface::class)->getMock();
 
-        $this->request = new Request($this->client);
+        $this->requestExceptionFactory = $this->getMockBuilder(RequestExceptionFactory::class)
+                                              ->disableOriginalConstructor()->getMock();
+
+        $this->request = new Request($this->client, $this->requestExceptionFactory);
     }
 
     public function testInvalidUri()
@@ -60,11 +70,21 @@ class RequestTest extends TestCase
         $this->assertEquals('OK', $response->getReasonPhrase());
     }
 
-    public function testShouldFailToSandRequestAndThrowRequestException()
+    public function testShouldFailToSendRequestAndThrowRequestExceptionWithInvalidParams()
     {
-        $this->client->expects($this->once())
-                     ->method('request')
-                     ->will($this->throwException(new ClientException('Error Message', $this->httpReq, $this->httpRes)));
+        $this->client
+            ->expects($this->once())
+            ->method('request')
+            ->will($this->throwException(new ClientException('Error Message', $this->httpReq, $this->httpRes)));
+
+        $this->requestExceptionFactory
+            ->expects($this->once())
+            ->method('createFromClientException')
+            ->will($this->throwException(new MultipleRequestExceptions([
+                                                                           'error_code' => 'INVALID',
+                                                                           'message' => 'Invalid Param',
+                                                                           'param' => 'test'
+                                                                       ])));
 
         $this->expectException(RequestException::class);
 
