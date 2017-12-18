@@ -5,7 +5,7 @@ namespace Sumup\Api\Http\Exception\Factory;
 use GuzzleHttp\Exception\ClientException;
 use Sumup\Api\Error\ApiError;
 use Sumup\Api\Error\ApiErrorContainer;
-use Sumup\Api\Http\Exception\MultipleRequestExceptions;
+use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\UnknownResponseException;
 
 class RequestExceptionFactory
@@ -30,7 +30,7 @@ class RequestExceptionFactory
      * Create exception from Guzzle Client Exception
      *
      * @param ClientException $clientException
-     * @throws MultipleRequestExceptions
+     * @throws RequestException
      * @throws UnknownResponseException
      */
     public function createFromClientException(ClientException $clientException)
@@ -43,7 +43,7 @@ class RequestExceptionFactory
 
         $errorsArray = $this->getResponseAsArray($responseBody);
 
-        throw new MultipleRequestExceptions($this->getErrors($errorsArray));
+        throw new RequestException($this->getErrors($errorsArray));
     }
 
     /**
