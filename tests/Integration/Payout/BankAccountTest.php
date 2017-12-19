@@ -1,11 +1,12 @@
 <?php
 
-namespace Integration\Payout;
+namespace Tests\Integration\Payout;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
+use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\RequiredArgumentException;
 use Sumup\Api\Model\Payout\BankAccount;
 use Sumup\Api\Repository\Collection;
@@ -31,7 +32,6 @@ class BankAccountTest extends TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
 
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
@@ -59,6 +59,7 @@ class BankAccountTest extends TestCase
                 'account_type' => 'SAVINGS'
             ]
         );
+
         $this->assertEquals('404865', $bankAccount->bankCode);
         $this->assertEquals('62****16', $bankAccount->accountNumber);
         $this->assertEquals('Test Testov', $bankAccount->accountHolderName);

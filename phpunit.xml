@@ -17,4 +17,7 @@
             <directory suffix=".php">src/</directory>
         </whitelist>
     </filter>
+    <listeners>
+        <listener class="Tests\IntegrationTestsListener" file="./tests/IntegrationTestsListener.php"></listener>
+    </listeners>
 </phpunit>

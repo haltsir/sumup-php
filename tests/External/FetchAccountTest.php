@@ -1,6 +1,6 @@
 <?php
 
-namespace External;
+namespace Tests\External;
 
 use PHPUnit\Framework\TestCase;
 

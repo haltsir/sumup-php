@@ -1,5 +1,5 @@
 <?php
-
+namespace Tests\Unit\Cache;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Cache\File\FileCacheItemPool;
 
@@ -82,7 +82,7 @@ class FileCachePoolTest extends TestCase
         $pool = new FileCacheItemPool('/');
         $item = $pool->getItem('test-save-access');
         $item->set('test');
-        $this->expectException(ErrorException::class);
+        $this->expectException(\ErrorException::class);
         $pool->save($item);
     }
 

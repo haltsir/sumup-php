@@ -80,11 +80,11 @@ class RequestTest extends TestCase
         $this->requestExceptionFactory
             ->expects($this->once())
             ->method('createFromClientException')
-            ->will($this->throwException(new MultipleRequestExceptions([
-                                                                           'error_code' => 'INVALID',
-                                                                           'message' => 'Invalid Param',
-                                                                           'param' => 'test'
-                                                                       ])));
+            ->will($this->throwException(new RequestException([
+                                                                  'error_code' => 'INVALID',
+                                                                  'message' => 'Invalid Param',
+                                                                  'param' => 'test'
+                                                              ])));
 
         $this->expectException(RequestException::class);
 

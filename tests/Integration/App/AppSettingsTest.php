@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\App;
+namespace Tests\Integration\App;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Account;
+namespace Tests\Integration\Account;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
@@ -20,8 +20,6 @@ class PersonalProfileTest extends TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $configuration = new Configuration();
@@ -39,34 +37,37 @@ class PersonalProfileTest extends TestCase
 
     }
 
-//TODO find a way to create personal profile with the same country, post code and landline as merchant
-    public function testCall()
+    public function testCreatePersonalProfile()
     {
-        $result = $this->personalProfileService->get();
-
-        if (!($result instanceof Profile)) {
-            $personalProfile = [
+        $personalProfile = [
+            "first_name" => "test_first_name",
+            "last_name" => "test_last_name",
+            "date_of_birth" => "08-06-1991",
+            "mobile_phone" => "+447700900518",
+            "address" => [
+                "address_line1" => "example test 1",
+                "address_line2" => "example test 2",
+                "city" => "london",
+                "country" => "GB",
+                "region_id" => 434,
+                "region_name" => "test name",
+                "post_code" => "EC1A 1BB",
+                "landline" => "+442071387901",
                 "first_name" => "test_first_name",
                 "last_name" => "test_last_name",
-                "date_of_birth" => "08-06-1991",
-                "mobile_phone" => "+447700900518",
-                "address" => [
-                    "address_line1" => "example test 1",
-                    "address_line2" => "example test 2",
-                    "city" => "london",
-                    "country" => "GB",
-                    "region_id" => 434,
-                    "region_name" => "test name",
-                    "post_code" => "EC1A 1BB",
-                    "landline" => "+442071387901",
-                    "first_name" => "test_first_name",
-                    "last_name" => "test_last_name",
-                    "company" => "test-co"
-                ]];
+                "company" => "test-co"
+            ]
+        ];
 
-            $result = $this->personalProfileService->create($personalProfile);
-        }
+        $result = $this->personalProfileService->create($personalProfile);
 
         $this->assertInstanceOf(Profile::class, $result);
+    }
+
+    public function testGetPersonalProfile()
+    {
+        $profile = $this->personalProfileService->get();
+
+        $this->assertInstanceOf(Profile::class, $profile);
     }
 } 

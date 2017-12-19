@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Account;
+namespace Tests\Integration\Account;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
@@ -14,6 +14,7 @@ class AccountTest extends TestCase
     {
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
+        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
     }
 
     public function testCall()

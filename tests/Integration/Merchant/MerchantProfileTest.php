@@ -1,6 +1,6 @@
 <?php
 
-namespace Integration\Merchant;
+namespace Tests\Integration\Merchant;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;

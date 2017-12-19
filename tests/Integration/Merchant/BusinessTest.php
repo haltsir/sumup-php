@@ -1,11 +1,12 @@
 <?php
 
-namespace Integration\Merchant;
+namespace Tests\Integration\Merchant;
 
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Exception\SumupClientException;
+use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\SumupClient;
 
@@ -28,8 +29,6 @@ class BusinessTest extends TestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
         $this->configuration = new Configuration();
@@ -47,23 +46,21 @@ class BusinessTest extends TestCase
         }
     }
 
-// TODO find a way to create business address with the same country as personal profile and set post code and landline for this country
     public function testBusiness()
     {
-        $business = $this->businessService->get();
-
         $data = [
             'business_name' => 'Test Business',
             'email' => 'test.business@sumup.com',
             'address' => [
                 'address_line1' => 'Test Address Line 1',
                 'city' => 'London',
-                'country' => 'US',
-                "post_code" => "90001",
+                'country' => 'GB',
+                "post_code" => "EC1A 1AT",
                 "landline" => "2345678910",
-                'region_id' => 16
+                'region_id' => null
             ]
         ];
+
         $this->assertTrue($this->businessService->update($data));
 
         $updateData = [
@@ -74,10 +71,12 @@ class BusinessTest extends TestCase
                 'country' => 'GB',
                 'post_code' => 'EC2Y 9AK',
                 'landline' => '+442071387901',
-                'region_id' => 434
+                'region_id' => null
             ]
         ];
         $this->businessService->update($updateData);
+
+        $business = $this->businessService->get();
 
         $this->assertEquals($updateData['business_name'], $business->name);
         $this->assertEquals($updateData['address']['address_line1'], $business->address->addressLine1);
