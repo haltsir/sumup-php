@@ -67,8 +67,8 @@ class IntegrationTestsListener extends TestSuite implements TestListener
     public function startTestSuite(TestSuite $suite)
     {
         if (strpos($suite->getName(), "Integration") !== false) {
-            if (!getenv('USER_ID')) {
-                putenv('USER_ID=' . uniqid());
+            if (!getenv('SUMUP_TEST_USER_ID')) {
+                putenv('SUMUP_TEST_USER_ID=' . uniqid());
                 $authUser = $this->authenticate();
                 $this->createTestUser($authUser->access_token);
             }
@@ -110,7 +110,7 @@ class IntegrationTestsListener extends TestSuite implements TestListener
         return [
             'country' => 'GB',
             'credentials' => [
-                'username' => getenv('SUMUP_TEST_ACCOUNT_PREFIX') . '_' . getenv('USER_ID') . '@example.org',
+                'username' => getenv('SUMUP_TEST_ACCOUNT_PREFIX') . '_' . getenv('SUMUP_TEST_USER_ID') . '@example.org',
                 'password' => getenv('SUMUP_TEST_PASSWORD')
             ]
         ];
