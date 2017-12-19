@@ -12,13 +12,13 @@ use Sumup\Api\Container\Exception\NotFoundException;
 use Sumup\Api\Error\ApiError;
 use Sumup\Api\Error\ApiErrorContainer;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
+use Sumup\Api\Model\Merchant\Me;
 use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Model\Factory\BankAccountFactory;
 use Sumup\Api\Model\Factory\PriceFactory;
 use Sumup\Api\Model\Factory\ProductFactory;
 use Sumup\Api\Model\Factory\ShelfFactory;
 use Sumup\Api\Model\Factory\OperatorFactory;
-use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
 use Sumup\Api\Model\Payout\BankAccount;
 use Sumup\Api\Model\Merchant\Business;
@@ -104,12 +104,12 @@ class SumupContainer extends Container implements ContainerInterface
         });
 
         /* Account */
-        $this['account.model'] = $this->factory(function () {
-            return new Account();
+        $this['me.model'] = $this->factory(function () {
+            return new Me();
         });
         $this['account.service'] = $this->factory(function ($container) {
             return new AccountService($container['configuration'], $container['oauth.client'],
-                                      $container['http.request'], $container['account.model'],
+                                      $container['http.request'], $container['me.model'],
                                       $container['validator.allowed_arguments']);
         });
 

@@ -6,6 +6,8 @@ use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Model\Merchant\Address;
+use Sumup\Api\Model\Merchant\Me;
+use Sumup\Api\Model\Merchant\Merchant;
 use Sumup\Api\SumupClient;
 
 class AccountTest extends TestCase
@@ -14,7 +16,6 @@ class AccountTest extends TestCase
     {
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
     }
 
     public function testCall()
@@ -29,6 +30,9 @@ class AccountTest extends TestCase
         $accountService = $client->createService('account');
 
         $result = $accountService->get();
-        $this->assertInstanceOf(Address::class, $result->address);
+
+        $this->assertInstanceOf(Me::class, $result);
+        $this->assertInstanceOf(Merchant::class, $result->merchantProfile);
+        $this->assertInstanceOf(Address::class, $result->merchantProfile->address);
     }
 }

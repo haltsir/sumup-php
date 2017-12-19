@@ -6,6 +6,7 @@ use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Configuration\ConfigurationInterface;
 use Sumup\Api\Model\Merchant\Account;
 use Sumup\Api\Http\Request;
+use Sumup\Api\Model\Merchant\Me;
 use Sumup\Api\Security\OAuth2\OAuthClientInterface;
 use Sumup\Api\Service\Exception\InvalidArgumentException;
 use Sumup\Api\Service\SumupService;
@@ -46,14 +47,14 @@ class AccountService extends SumupService
      * @param Request $request
      * @param ConfigurationInterface $configuration
      * @param OAuthClientInterface $client
-     * @param Account $account
+     * @param Me $account
      * @param string $allowedArgumentsValidator
      */
     public function __construct(
         ConfigurationInterface $configuration,
         OAuthClientInterface $client,
         Request $request,
-        Account $account,
+        Me $account,
         string $allowedArgumentsValidator
     )
     {

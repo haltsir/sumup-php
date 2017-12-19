@@ -130,6 +130,10 @@ trait HydratorTrait
     private function resolveHydrationValueArray($type, $data)
     {
         $results = [];
+        if(empty($data)) {
+            return $results;
+        }
+
         foreach ($data as $subdata) {
             $results[] = $this->resolveHydrationValue($type, $subdata);
         }
