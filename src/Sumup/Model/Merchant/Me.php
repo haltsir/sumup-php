@@ -1,8 +1,6 @@
 <?php
 
 namespace Sumup\Api\Model\Merchant;
-
-
 use Sumup\Api\Model\Mobile\Settings;
 use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Model\Operator\Permission;
