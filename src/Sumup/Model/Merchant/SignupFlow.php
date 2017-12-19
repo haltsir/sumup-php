@@ -2,19 +2,21 @@
 
 namespace Sumup\Api\Model\Merchant;
 
-use Sumup\Api\Traits\HydratorTrait;
 
-class Account
+class SignupFlow
 {
-    use HydratorTrait;
+    /**
+     * @var string
+     */
+    public $id;
 
     /**
      * @var string
      */
-    public $username;
+    public $name;
 
     /**
      * @var string
      */
-    public $type;
+    public $state;
 }
