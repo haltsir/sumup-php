@@ -110,7 +110,7 @@ class IntegrationTestsListener extends TestSuite implements TestListener
         return [
             'country' => 'GB',
             'credentials' => [
-                'username' => getenv('SUMUP_TEST_ACCOUNT_PREFIX') . '_' . getenv('SUMUP_TEST_USER_ID') . '@example.org',
+                'username' => getenv('SUMUP_TEST_ACCOUNT_PREFIX') . getenv('SUMUP_TEST_USER_ID') . '@example.org',
                 'password' => getenv('SUMUP_TEST_PASSWORD')
             ]
         ];
