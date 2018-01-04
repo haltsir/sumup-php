@@ -26,94 +26,104 @@ class IntegrationTestsListener extends TestSuite implements TestListener
 
     public function addWarning(Test $test, Warning $e, $time)
     {
-        printf("Warning while running test '%s'.\n", $test->getName());
+//        printf('Warning while running test '%s'.\n', $test->getName());
     }
 
     public function addError(Test $test, \Exception $e, $time)
     {
-        printf("Error while running test '%s'.\n", $test->getName());
+//        printf('Error while running test '%s'.\n', $test->getName());
     }
 
     public function addFailure(Test $test, AssertionFailedError $e, $time)
     {
-        printf("Test '%s' failed.\n", $test->getName());
+//        printf('Test '%s' failed.\n', $test->getName());
     }
 
     public function addIncompleteTest(Test $test, \Exception $e, $time)
     {
-        printf("Test '%s' is incomplete.\n", $test->getName());
+//        printf('Test '%s' is incomplete.\n', $test->getName());
     }
 
     public function addRiskyTest(Test $test, \Exception $e, $time)
     {
-        printf("Test '%s' is deemed risky.\n", $test->getName());
+//        printf('Test '%s' is deemed risky.\n', $test->getName());
     }
 
     public function addSkippedTest(Test $test, \Exception $e, $time)
     {
-        printf("Test '%s' has been skipped.\n", $test->getName());
+//        printf('Test '%s' has been skipped.\n', $test->getName());
     }
 
     public function startTest(Test $test)
     {
-        printf("Test '%s' started.\n", $test->getName());
+//        printf('Test \'%s\' started.' . PHP_EOL, $test->getName());
     }
 
     public function endTest(Test $test, $time)
     {
-        printf("Test '%s' ended.\n", $test->getName());
+//        printf('Test \'%s\' ended.' . PHP_EOL, $test->getName());
     }
 
     public function startTestSuite(TestSuite $suite)
     {
-        if (strpos($suite->getName(), "Integration") !== false) {
-            if (!getenv('SUMUP_TEST_USER_ID')) {
-                putenv('SUMUP_TEST_USER_ID=' . uniqid());
-                $authUser = $this->authenticate();
-                $this->createTestUser($authUser->access_token);
-            }
+        $accountSetup = !!getenv('SUMUP_TEST_USER_ID');
+        $accountExists = !!getenv('SUMUP_TEST_ACCOUNT_EXISTS');
+        $isIntegration = (false === strpos($suite->getName(), 'Integration'));
+        $username = $password = null;
+
+        if (!$accountSetup) {
+            putenv('SUMUP_TEST_USER_ID=' . uniqid());
+            $username = getenv('SUMUP_TEST_ACCOUNT_PREFIX') . getenv('SUMUP_TEST_USER_ID') . '@example.org';
+            $password = getenv('SUMUP_TEST_PASSWORD');
+            echo sprintf('Testing with user %s and password "%s"' . PHP_EOL, $username, $password);
+            $accountSetup = true;
+        }
+
+        if ($isIntegration && $accountSetup && !$accountExists) {
+            $authUser = $this->authenticate();
+            $this->createTestUser($authUser->access_token, $username, $password);
+            putenv('SUMUP_TEST_ACCOUNT_EXISTS=1');
         }
     }
 
     public function endTestSuite(TestSuite $suite)
     {
-        printf("TestSuite '%s' ended.\n", $suite->getName());
+//        printf('TestSuite '%s' ended.\n', $suite->getName());
     }
 
     public function authenticate()
     {
         $response = $this->client->request('POST', getenv('SUMUP_TEST_ENDPOINT') . '/token', [
             'json' => [
-                "grant_type" => "password",
-                "client_id" => getenv('SUMUP_TEST_CLIENT_ID'),
-                "username" => getenv('SUMUP_TEST_USERNAME'),
-                "password" => getenv('SUMUP_TEST_PASSWORD')
+                'grant_type' => 'password',
+                'client_id' => getenv('SUMUP_TEST_CLIENT_ID'),
+                'username' => getenv('SUMUP_TEST_USERNAME'),
+                'password' => getenv('SUMUP_TEST_PASSWORD')
             ]
         ]);
 
         return json_decode((string)$response->getBody());
     }
 
-    public function createTestUser($accessToken)
+    public function createTestUser($accessToken, $username, $password)
     {
-
-        $response = $this->client->request('POST', getenv('SUMUP_TEST_ENDPOINT') . '/v0.1/users',
-                                           ['json' => $this->createUserWithSumupPrefix(),
-                                            'headers' => ['Authorization' => 'Bearer ' . $accessToken]]);
+        $response = $this->client->request(
+            'POST',
+            getenv('SUMUP_TEST_ENDPOINT') . '/v0.1/users',
+            [
+                'json' =>
+                    [
+                        'country' => 'GB',
+                        'credentials' => [
+                            'username' => $username,
+                            'password' => $password
+                        ]
+                    ],
+                'headers' => ['Authorization' => 'Bearer ' . $accessToken]
+            ]
+        );
 
         $this->setUserEnv(json_decode((string)$response->getBody()));
-
-    }
-
-    public function createUserWithSumupPrefix()
-    {
-        return [
-            'country' => 'GB',
-            'credentials' => [
-                'username' => getenv('SUMUP_TEST_ACCOUNT_PREFIX') . getenv('SUMUP_TEST_USER_ID') . '@example.org',
-                'password' => getenv('SUMUP_TEST_PASSWORD')
-            ]
-        ];
     }
 
     public function setUserEnv(\stdClass $response)

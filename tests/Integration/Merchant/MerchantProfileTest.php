@@ -5,43 +5,66 @@ namespace Tests\Integration\Merchant;
 use Dotenv\Dotenv;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Configuration\Configuration;
+use Sumup\Api\Exception\SumupClientException;
+use Sumup\Api\Model\Merchant\LegalType;
+use Sumup\Api\Model\Merchant\Merchant;
+use Sumup\Api\Service\Merchant\MerchantProfileService;
 use Sumup\Api\SumupClient;
 
 class MerchantProfileTest extends TestCase
 {
-    private $configuration;
+    /**
+     * @var MerchantProfileService
+     */
+    protected $merchantProfileService;
 
     public function setUp()
     {
-        $this->markTestSkipped('Incomplete implementation due to API inconsistencies.');
-
         $dotenv = new Dotenv(__DIR__ . '/../../../');
         $dotenv->load();
-        $this->configuration = new Configuration();
-        $this->configuration->setUsername(getenv('SUMUP_TEST_USERNAME'));
-        $this->configuration->setPassword(getenv('SUMUP_TEST_PASSWORD'));
-        $this->configuration->setClientId(getenv('SUMUP_TEST_CLIENT_ID'));
-        $this->configuration->setApiEndpoint(getenv('SUMUP_TEST_ENDPOINT'));
+        $configuration = new Configuration();
+        $configuration->setUsername(getenv('SUMUP_TEST_USERNAME'));
+        $configuration->setPassword(getenv('SUMUP_TEST_PASSWORD'));
+        $configuration->setClientId(getenv('SUMUP_TEST_CLIENT_ID'));
+        $configuration->setApiEndpoint(getenv('SUMUP_TEST_ENDPOINT'));
+
+        try {
+            $client = new SumupClient($configuration);
+            $this->merchantProfileService = $client->createService('merchant.profile');
+        } catch (SumupClientException $clientException) {
+            $this->fail($clientException->getMessage());
+        }
+    }
+
+    public function testUpdate()
+    {
+        $data = [
+            'legal_type' => [
+                'id' => 12
+            ],
+            'merchant_category_code' => 1520,
+            'company_name' => 'Test Company',
+            'address' => [
+                'address_line1' => 'Test Address Line 1',
+                'city' => 'Test City',
+                'country' => 'GB',
+                'post_code' => 'EC2Y 9AL',
+                'landline' => '+442071387900'
+            ]
+        ];
+
+        /** @var Merchant $merchant */
+        $merchant = $this->merchantProfileService->update($data);
+
+        $this->assertInstanceOf(Merchant::class, $merchant);
+        $this->assertInstanceOf(LegalType::class, $merchant->legalType);
+        $this->assertEquals('1520', $merchant->merchantCategoryCode);
     }
 
     public function testGetProfile()
     {
-        $client = new SumupClient($this->configuration);
-        $merchantProfileService = $client->createService('merchant.profile');
-
-        $result = $merchantProfileService->get();
-        $this->assertNotEmpty($result->merchantCode);
-    }
-
-    /**
-     * Test cannot be completed due to API bug.
-     */
-    public function testUpdate()
-    {
-        $client = new SumupClient($this->configuration);
-        $merchantProfileService = $client->createService('merchant.profile');
-
-        $merchant = $merchantProfileService->get();
-        $result = $merchantProfileService->update($merchant);
+        /** @var Merchant $merchant */
+        $merchant = $this->merchantProfileService->get();
+        $this->assertNotEmpty($merchant->merchantCode);
     }
 }

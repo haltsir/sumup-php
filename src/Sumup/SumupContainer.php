@@ -12,7 +12,11 @@ use Sumup\Api\Container\Exception\NotFoundException;
 use Sumup\Api\Error\ApiError;
 use Sumup\Api\Error\ApiErrorContainer;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
+use Sumup\Api\Model\Factory\CompletedCheckoutFactory;
 use Sumup\Api\Model\Merchant\Me;
+use Sumup\Api\Model\Checkout\Checkout;
+use Sumup\Api\Model\Checkout\CompletedCheckout;
+use Sumup\Api\Model\Factory\CheckoutFactory;
 use Sumup\Api\Model\Operator\Operator;
 use Sumup\Api\Model\Factory\BankAccountFactory;
 use Sumup\Api\Model\Factory\PriceFactory;
@@ -31,6 +35,7 @@ use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\App\AppSettingsService;
+use Sumup\Api\Service\Checkout\CheckoutService;
 use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\Service\Account\OperatorService;
@@ -196,7 +201,6 @@ class SumupContainer extends Container implements ContainerInterface
                                        $container['configuration'], $container['oauth.client']);
         });
 
-
         /* Bank Account */
         $this['bank_account.model'] = $this->factory(function () {
             return new BankAccount();
@@ -224,13 +228,30 @@ class SumupContainer extends Container implements ContainerInterface
             return new AppSettings();
 
         });
-
         $this['app.settings.service'] = $this->factory(function ($container) {
             return new AppSettingsService($container['configuration'], $container['oauth.client'],
                                           $container['http.request'], $container['app.settings.model']);
         });
 
-
+        /* Checkout */
+        $this['checkout.model'] = $this->factory(function () {
+            return new Checkout();
+        });
+        $this['checkout.completed_checkout.model'] = $this->factory(function () {
+            return new CompletedCheckout();
+        });
+        $this['checkout.factory'] = $this->factory(function ($container) {
+            return new CheckoutFactory($container['checkout.model'], $container['collection']);
+        });
+        $this['checkout.completed_checkout.factory'] = $this->factory(function ($container) {
+            return new CompletedCheckoutFactory($container['checkout.completed_checkout.model'], $container['collection']);
+        });
+        $this['checkout.service'] = $this->factory(function ($container) {
+            return new CheckoutService($container['configuration'], $container['oauth.client'],
+                                       $container['http.request'], $container['checkout.factory'],
+                                       $container['checkout.completed_checkout.factory'],
+                                       $container['validator.required_arguments']);
+        });
     }
 
     /**

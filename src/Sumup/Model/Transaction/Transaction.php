@@ -2,11 +2,13 @@
 
 namespace Sumup\Api\Model\Transaction;
 
-use Sumup\Api\Model\Merchant\Card;
-use Sumup\Api\Model\Merchant\ElvAccount;
+use Sumup\Api\Traits\HydratorTrait;
+use Sumup\Api\Traits\SerializerTrait;
 
 class Transaction
 {
+    use HydratorTrait, SerializerTrait;
+
     /**
      * @var string
      */
