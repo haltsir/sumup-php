@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\ClientException;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
+
 class Request
 {
     /**
@@ -152,5 +153,7 @@ class Request
         } catch (ClientException $clientException) {
             $this->requestExceptionFactory->createFromClientException($clientException);
         }
+
+        return false;
     }
 }

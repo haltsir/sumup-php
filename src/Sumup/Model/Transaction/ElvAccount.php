@@ -1,6 +1,6 @@
 <?php
 
-namespace Sumup\Api\Model\Merchant;
+namespace Sumup\Api\Model\Transaction;
 
 class ElvAccount
 {

@@ -39,7 +39,12 @@ class Merchant
     ];
 
     const MAP_ENTITY_TO_JSON = [
-        'legalType.id' => ['path' => 'legal_type_id']
+        'legalType' => [
+            'path' => [
+                'id' => 'legal_type_id'
+            ],
+            'type' => 'LegalType'
+        ]
     ];
 
     /**

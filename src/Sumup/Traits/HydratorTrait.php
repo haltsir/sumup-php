@@ -13,50 +13,54 @@ trait HydratorTrait
     public function hydrate(array $data)
     {
         if (defined('self::MAP_JSON_TO_ENTITY')) {
-            return $this->hydrateMap($data);
+            return $this->hydrateMap($this, $data, self::MAP_JSON_TO_ENTITY);
         }
 
-        foreach (array_keys(get_object_vars($this)) as $property) {
+        return $this->hydrateObject($this, $data);
+    }
+
+    private function hydrateObject($object, $data)
+    {
+        foreach (array_keys(get_object_vars($object)) as $property) {
             $key = camelCaseToSnakeCase($property);
             if (array_key_exists($key, $data)) {
-                $this->$property = $data[$key];
+                $object->$property = $data[$key];
             }
 
             if (!array_key_exists($property, $data)) {
                 continue;
             }
 
-            $this->$property = $data[$property];
+            $object->$property = $data[$property];
         }
 
-        return $this;
+        return $object;
     }
 
     /**
      * Hydrate mapped entity.
      *
+     * @param $object
      * @param array $data
+     * @param array $map
      * @return $this
      */
-    private function hydrateMap(array $data)
+    private function hydrateMap($object, array $data, array $map)
     {
-        if (false === defined('self::MAP_JSON_TO_ENTITY')) {
-            return $this;
-        }
-
-        foreach (array_keys(get_object_vars($this)) as $property) {
-            if (!isset(self::MAP_JSON_TO_ENTITY[$property])) {
-                if (isset($data[$property])) {
-                    $this->$property = $data[$property];
+        foreach (array_keys(get_object_vars($object)) as $property) {
+            if (!isset($map[$property])) {
+                $key = camelCaseToSnakeCase($property);
+                if (isset($data[$key])) {
+                    $object->$property = $data[$key];
                 }
                 continue;
             }
 
-            $map = self::MAP_JSON_TO_ENTITY[$property];
-            $this->$property = $this->resolveHydrationMap($property, $map, $data);
+            $localMap = self::MAP_JSON_TO_ENTITY[$property];
+            $object->$property = $this->resolveHydrationMap($property, $localMap, $data);
         }
 
-        return $this;
+        return $object;
     }
 
     /**
@@ -130,7 +134,7 @@ trait HydratorTrait
     private function resolveHydrationValueArray($type, $data)
     {
         $results = [];
-        if(empty($data)) {
+        if (empty($data)) {
             return $results;
         }
 

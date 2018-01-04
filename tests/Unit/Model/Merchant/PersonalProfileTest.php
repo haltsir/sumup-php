@@ -27,8 +27,8 @@ class PersonalProfileTest extends TestCase
                 'region_code' => 3000,
                 'post_code' => 3001,
                 'landline' => 1,
-                'firstName' => 'testFirst',
-                'lastName' => 'testLast',
+                'first_name' => 'testFirst',
+                'last_name' => 'testLast',
                 'company' => 'testC',
                 'country_details' => [
                     'currency' => 'lev',
@@ -48,36 +48,36 @@ class PersonalProfileTest extends TestCase
         $personalProfileModel = new Profile();
         $personalProfileModel->hydrate($data);
 
-        $this->assertEquals($personalProfileModel->firstName, 'testFirst');
-        $this->assertEquals($personalProfileModel->lastName, 'testLast');
-        $this->assertEquals($personalProfileModel->dateOfBirth, '01-01-2011');
-        $this->assertEquals($personalProfileModel->mobilePhone, '0879803300');
-        $this->assertEquals($personalProfileModel->nationalId, 'BG');
-        $this->assertEquals($personalProfileModel->address->stateId, '10');
+        $this->assertEquals('testFirst', $personalProfileModel->firstName);
+        $this->assertEquals('testLast', $personalProfileModel->lastName);
+        $this->assertEquals('01-01-2011', $personalProfileModel->dateOfBirth);
+        $this->assertEquals('0879803300', $personalProfileModel->mobilePhone);
+        $this->assertEquals('BG', $personalProfileModel->nationalId);
+        $this->assertEquals('10', $personalProfileModel->address->stateId);
 
         $this->assertInstanceOf(Address::class, $personalProfileModel->address);
-        $this->assertEquals($personalProfileModel->address->addressLine1, 'addressLine1');
-        $this->assertEquals($personalProfileModel->address->addressLine2, 'addressLine2');
-        $this->assertEquals($personalProfileModel->address->city, 'test_city');
-        $this->assertEquals($personalProfileModel->address->country, 'US');
-        $this->assertEquals($personalProfileModel->address->regionId, 1);
-        $this->assertEquals($personalProfileModel->address->regionCode, 3000);
-        $this->assertEquals($personalProfileModel->address->postCode, 3001);
-        $this->assertEquals($personalProfileModel->address->landline, 1);
-        $this->assertEquals($personalProfileModel->address->firstName, 'testFirst');
-        $this->assertEquals($personalProfileModel->address->lastName, 'testLast');
-        $this->assertEquals($personalProfileModel->address->company, 'testC');
+        $this->assertEquals('addressLine1', $personalProfileModel->address->addressLine1);
+        $this->assertEquals('addressLine2', $personalProfileModel->address->addressLine2);
+        $this->assertEquals('test_city', $personalProfileModel->address->city);
+        $this->assertEquals('US', $personalProfileModel->address->country);
+        $this->assertEquals(1, $personalProfileModel->address->regionId);
+        $this->assertEquals(3000, $personalProfileModel->address->regionCode);
+        $this->assertEquals(3001, $personalProfileModel->address->postCode);
+        $this->assertEquals(1, $personalProfileModel->address->landline);
+        $this->assertEquals('testFirst', $personalProfileModel->address->firstName);
+        $this->assertEquals('testLast', $personalProfileModel->address->lastName);
+        $this->assertEquals('testC', $personalProfileModel->address->company);
 
         $this->assertInstanceOf(Country::class, $personalProfileModel->address->countryDetails);
-        $this->assertEquals($personalProfileModel->address->countryDetails->currency, 'lev');
-        $this->assertEquals($personalProfileModel->address->countryDetails->isoCode, 'BG');
-        $this->assertEquals($personalProfileModel->address->countryDetails->enName, 'en_name_test');
-        $this->assertEquals($personalProfileModel->address->countryDetails->nativeName, 'native_test');
+        $this->assertEquals('lev', $personalProfileModel->address->countryDetails->currency);
+        $this->assertEquals('BG', $personalProfileModel->address->countryDetails->isoCode);
+        $this->assertEquals('en_name_test', $personalProfileModel->address->countryDetails->enName);
+        $this->assertEquals('native_test', $personalProfileModel->address->countryDetails->nativeName);
 
 
         $this->assertInstanceOf(Timeoffset::class, $personalProfileModel->address->timeoffsetDetails);
-        $this->assertEquals($personalProfileModel->address->timeoffsetDetails->postCode, '1000');
-        $this->assertEquals($personalProfileModel->address->timeoffsetDetails->offset, 1);
-        $this->assertEquals($personalProfileModel->address->timeoffsetDetails->dst, true);
+        $this->assertEquals( '1000', $personalProfileModel->address->timeoffsetDetails->postCode);
+        $this->assertEquals(1, $personalProfileModel->address->timeoffsetDetails->offset);
+        $this->assertEquals(true, $personalProfileModel->address->timeoffsetDetails->dst);
     }
 }

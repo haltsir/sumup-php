@@ -6,6 +6,9 @@
             <directory>tests/External</directory>
         </testsuite>
         <testsuite name="Integration">
+            <file>tests/Integration/Account/PersonalProfileTest.php</file>
+            <file>tests/Integration/Merchant/MerchantProfileTest.php</file>
+            <!--<file>tests/Integration/Checkout/CheckoutTest.php</file>-->
             <directory>tests/Integration</directory>
         </testsuite>
         <testsuite name="Unit">
