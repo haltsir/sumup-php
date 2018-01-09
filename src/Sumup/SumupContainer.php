@@ -13,6 +13,7 @@ use Sumup\Api\Error\ApiError;
 use Sumup\Api\Error\ApiErrorContainer;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 use Sumup\Api\Model\Factory\CompletedCheckoutFactory;
+use Sumup\Api\Model\Factory\CustomerFactory;
 use Sumup\Api\Model\Merchant\Me;
 use Sumup\Api\Model\Checkout\Checkout;
 use Sumup\Api\Model\Checkout\CompletedCheckout;
@@ -258,11 +259,15 @@ class SumupContainer extends Container implements ContainerInterface
         /* Customer */
         $this['customer.model'] = $this->factory(function () {
             return new Customer();
-
         });
+
+        $this['customer.factory'] = $this->factory(function ($container) {
+            return new CustomerFactory($container['customer.model'], $container['collection']);
+        });
+
         $this['customer.service'] = $this->factory(function ($container) {
             return new CustomerService($container['configuration'], $container['oauth.client'],
-                                       $container['http.request'],$this['customer.model']);
+                                       $container['http.request'],$this['customer.factory']);
         });
     }
 
