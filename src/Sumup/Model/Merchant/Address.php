@@ -27,6 +27,16 @@ class Address
     /**
      * @var string
      */
+    public $line1;
+
+    /**
+     * @var string
+     */
+    public $line2;
+
+    /**
+     * @var string
+     */
     public $addressLine2;
 
     /**
@@ -78,6 +88,16 @@ class Address
      * @var Country
      */
     public $countryDetails;
+
+    /**
+     * @var string
+     */
+    public $countryEnName;
+
+    /**
+     * @var string
+     */
+    public $countryNativeName;
 
     /**
      * @var Timeoffset
