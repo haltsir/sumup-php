@@ -15,7 +15,7 @@ use Sumup\Api\Validator\RequiredArgumentsValidator;
 
 class ShelfService extends SumupService
 {
-    const ALLOWED_OPTIONS = ['products'];
+    const ALLOWED_OPTIONS = ['include[]'];
     const REQUIRED_DATA = ['name'];
 
     /**
@@ -81,7 +81,7 @@ class ShelfService extends SumupService
                                  ->setUri($this->configuration->getFullEndpoint() . '/me/merchant-profile/shelves');
 
         if (sizeof($options) > 0) {
-            $request->setQuery(implode('include[]=', $options));
+            $request->setQuery($options);
         }
 
         /** @var ResponseInterface $response */
@@ -112,7 +112,7 @@ class ShelfService extends SumupService
                                  );
 
         if (sizeof($options) > 0) {
-            $request->setQuery(implode('include[]=', $options));
+            $request->setQuery($options);
         }
 
         /** @var ResponseInterface $response */

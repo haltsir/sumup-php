@@ -144,9 +144,11 @@ class Request
         if (in_array($this->getMethod(), ['POST', 'PUT'])) {
             $options += [
                 'json' => $this->getBody(),
-                'query' => $this->getQuery()
+
             ];
         }
+
+        $options += ['query' => $this->getQuery()];
 
         try {
             return $this->httpClient->request($this->getMethod(), $this->getUri(), $options);
