@@ -9,6 +9,8 @@ class Address
     use HydratorTrait;
 
     const MAP_JSON_TO_ENTITY = [
+        'countryNameEnglish' => ['path' => 'country_en_name'],
+        'countryNameNative' => ['path' => 'country_native_name'],
         'countryDetails' => [
             'path' => 'country_details',
             'type' => Country::class
@@ -23,6 +25,16 @@ class Address
      * @var string
      */
     public $addressLine1;
+
+    /**
+     * @var string
+     */
+    public $line1;
+
+    /**
+     * @var string
+     */
+    public $line2;
 
     /**
      * @var string
@@ -78,6 +90,16 @@ class Address
      * @var Country
      */
     public $countryDetails;
+
+    /**
+     * @var string
+     */
+    public $countryNameEnglish;
+
+    /**
+     * @var string
+     */
+    public $countryNameNative;
 
     /**
      * @var Timeoffset

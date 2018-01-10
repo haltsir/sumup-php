@@ -1,6 +1,6 @@
 <?php
 
-namespace External;
+namespace Tests\External;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
@@ -10,7 +10,6 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
-use Sumup\Api\Http\Exception\MultipleRequestExceptions;
 use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Request;
 
