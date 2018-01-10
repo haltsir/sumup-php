@@ -13,6 +13,7 @@ use Sumup\Api\Error\ApiError;
 use Sumup\Api\Error\ApiErrorContainer;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 use Sumup\Api\Model\Factory\CompletedCheckoutFactory;
+use Sumup\Api\Model\Factory\CustomerFactory;
 use Sumup\Api\Model\Merchant\Me;
 use Sumup\Api\Model\Checkout\Checkout;
 use Sumup\Api\Model\Checkout\CompletedCheckout;
@@ -36,6 +37,7 @@ use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\App\AppSettingsService;
 use Sumup\Api\Service\Checkout\CheckoutService;
+use Sumup\Api\Service\Customer\CustomerService;
 use Sumup\Api\Service\Payout\BankAccountService;
 use Sumup\Api\Service\Merchant\BusinessService;
 use Sumup\Api\Service\Account\OperatorService;
@@ -48,6 +50,7 @@ use Sumup\Api\Service\Payout\SettingsService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 use Sumup\Api\Model\Mobile\Settings as AppSettings;
+use Sumup\Api\Model\Customer\Customer;
 
 class SumupContainer extends Container implements ContainerInterface
 {
@@ -251,6 +254,20 @@ class SumupContainer extends Container implements ContainerInterface
                                        $container['http.request'], $container['checkout.factory'],
                                        $container['checkout.completed_checkout.factory'],
                                        $container['validator.required_arguments']);
+        });
+
+        /* Customer */
+        $this['customer.model'] = $this->factory(function () {
+            return new Customer();
+        });
+
+        $this['customer.factory'] = $this->factory(function ($container) {
+            return new CustomerFactory($container['customer.model'], $container['collection']);
+        });
+
+        $this['customer.service'] = $this->factory(function ($container) {
+            return new CustomerService($container['configuration'], $container['oauth.client'],
+                                       $container['http.request'],$this['customer.factory']);
         });
     }
 
