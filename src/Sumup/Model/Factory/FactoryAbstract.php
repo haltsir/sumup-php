@@ -4,7 +4,7 @@ namespace Sumup\Api\Model\Factory;
 
 use Sumup\Api\Repository\Collection;
 
-class FactoryAbstract implements FactoryInterface
+abstract class FactoryAbstract implements FactoryInterface
 {
     /**
      * @var

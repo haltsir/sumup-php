@@ -72,7 +72,7 @@ class ShelfTest extends TestCase
         $shelf = array_shift($shelves);
         $this->assertInstanceOf(Shelf::class, $shelf);
 
-        $shelves = $this->shelfService->all(['products'])
+        $shelves = $this->shelfService->all(['include[]' => 'products'])
                                       ->all();
         $shelf = array_shift($shelves);
         $this->assertObjectHasAttribute('products', $shelf);
