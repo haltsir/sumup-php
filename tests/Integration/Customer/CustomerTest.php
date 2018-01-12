@@ -51,7 +51,7 @@ class CustomerTest extends TestCase
 
     public function testCreateCustomer()
     {
-        $customer_id = uniqid();
+        $customer_id = 'sumup-php-customer-'. uniqid();
 
         $data = [
             "customer_id" => $customer_id,
