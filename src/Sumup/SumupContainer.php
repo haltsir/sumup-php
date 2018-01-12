@@ -15,6 +15,9 @@ use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 use Sumup\Api\Model\Customer\PaymentInstrument;
 use Sumup\Api\Model\Factory\CompletedCheckoutFactory;
 use Sumup\Api\Model\Factory\CustomerFactory;
+use Sumup\Api\Model\Factory\TransactionFactory;
+use Sumup\Api\Model\Factory\TransactionHistoryFactory;
+use Sumup\Api\Model\Factory\TransactionItemFactory;
 use Sumup\Api\Model\Factory\PaymentInstrumentFactory;
 use Sumup\Api\Model\Merchant\Me;
 use Sumup\Api\Model\Checkout\Checkout;
@@ -35,6 +38,9 @@ use Sumup\Api\Model\Payout\Settings;
 use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
+use Sumup\Api\Model\Transaction\Transaction;
+use Sumup\Api\Model\Transaction\TransactionHistory;
+use Sumup\Api\Model\Transaction\TransactionItem;
 use Sumup\Api\Security\Factory\OAuthClientFactory;
 use Sumup\Api\Service\Account\AccountService;
 use Sumup\Api\Service\App\AppSettingsService;
@@ -50,6 +56,7 @@ use Sumup\Api\Service\Merchant\PriceService;
 use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Service\Payout\SettingsService;
+use Sumup\Api\Service\Transaction\TransactionService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
 use Sumup\Api\Model\Mobile\Settings as AppSettings;
@@ -271,6 +278,32 @@ class SumupContainer extends Container implements ContainerInterface
         $this['customer.service'] = $this->factory(function ($container) {
             return new CustomerService($container['configuration'], $container['oauth.client'],
                                        $container['http.request'],$this['customer.factory']);
+        });
+
+        /* Transaction */
+        $this['transaction.history.model'] = $this->factory(function () {
+            return new TransactionHistory();
+        });
+        $this['transaction.history.factory'] = function ($container) {
+            return new TransactionHistoryFactory($container['transaction.history.model'], $container['collection']);
+        };
+        $this['transaction.item.model'] = $this->factory(function () {
+            return new TransactionItem();
+        });
+        $this['transaction.item.factory'] = function ($container) {
+            return new TransactionItemFactory($container['transaction.item.model'], $container['collection']);
+        };
+        $this['transaction.model'] = $this->factory(function () {
+            return new Transaction();
+        });
+        $this['transaction.factory'] = function ($container) {
+            return new TransactionFactory($container['transaction.model'], $container['collection']);
+        };
+        $this['transaction.service'] = $this->factory(function ($container) {
+            return new TransactionService($container['configuration'], $container['oauth.client'],
+                                          $container['http.request'], $container['transaction.factory'],
+                                          $container['transaction.history.factory'],
+                                          $container['validator.allowed_arguments']);
         });
 
         /* Payment Instrument */

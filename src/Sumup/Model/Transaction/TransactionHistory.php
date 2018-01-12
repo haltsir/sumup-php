@@ -2,95 +2,32 @@
 
 namespace Sumup\Api\Model\Transaction;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class TransactionHistory
 {
-    /**
-     * @var string
-     */
-    public $id;
+    use HydratorTrait;
+
+    const MAP_JSON_TO_ENTITY = [
+        'items' => [
+            'path' => 'items',
+            'type' => 'array',
+            'subtype' => TransactionItem::class
+        ],
+        'links' => [
+            'path' => 'links',
+            'type' => 'array',
+            'subtype' => TransactionLink::class
+        ]
+    ];
 
     /**
-     * @var string
+     * @var array
      */
-    public $transactionId;
+    public $items;
 
     /**
-     * @var string
+     * @var array
      */
-    public $user;
-
-    /**
-     * @var string
-     */
-    public $type;
-
-    /**
-     * @var string
-     */
-    public $status;
-
-    /**
-     * @var
-     */
-    public $timestamp;
-
-    /**
-     * @var string;
-     */
-    public $currency;
-
-    /**
-     * @var int
-     */
-    public $amount;
-
-    /**
-     * @var string
-     */
-    public $transactionCode;
-
-    /**
-     * @var string
-     */
-    public $productSummary;
-
-    /**
-     * @var int
-     */
-    public $installmentsCount;
-
-    /**
-     * @var string
-     */
-    public $paymentType;
-
-    /**
-     * @var string
-     */
-    public $cardType;
-
-    /**
-     * @var int
-     */
-    public $payoutsTotal;
-
-    /**
-     * @var int
-     */
-    public $payoutsReceived;
-
-    /**
-     * @var string
-     */
-    public $payoutDate;
-
-    /**
-     * @var string
-     */
-    public $payoutPlan;
-
-    /**
-     * @var string
-     */
-    public $payoutType;
+    public $links;
 }
