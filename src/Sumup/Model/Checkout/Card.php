@@ -12,6 +12,16 @@ class Card
     /**
      * @var string
      */
+    public $last4Digits;
+
+    /**
+     * @var string
+     */
+    public $type;
+
+    /**
+     * @var string
+     */
     public $name;
 
     /**
