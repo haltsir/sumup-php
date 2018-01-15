@@ -7,6 +7,7 @@ use Sumup\Api\Traits\HydratorTrait;
 class Acquirer
 {
     use HydratorTrait;
+
     /**
      * @var string
      */

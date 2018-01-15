@@ -49,8 +49,7 @@ class ReceiptService
     const REQUIRED_DATA = ['mid'];
 
     public function __construct(ConfigurationInterface $configuration, OAuthClientInterface $client, Request $request,
-                                Receipt $receipt, string $allowedArgumentsValidator,
-                                $requiredArgumentsValidator)
+                                Receipt $receipt, string $allowedArgumentsValidator, $requiredArgumentsValidator)
     {
         $this->client = $client;
         $this->receipt = $receipt;
@@ -72,11 +71,11 @@ class ReceiptService
      */
     public function get(string $transactionId, array $options)
     {
-        if(false === $this->requiredArgumentsValidator::validate($options, self::REQUIRED_DATA)) {
+        if (false === $this->requiredArgumentsValidator::validate($options, self::REQUIRED_DATA)) {
             throw new RequiredArgumentException('Missing required data provided to ' . __CLASS__);
         }
 
-        if(false === $this->allowedArgumentsValidator::validate($options, self::ALLOWED_ACCOUNT_OPTIONS)) {
+        if (false === $this->allowedArgumentsValidator::validate($options, self::ALLOWED_ACCOUNT_OPTIONS)) {
             throw new InvalidArgumentException('Invalid arguments provided to ' . __CLASS__ . '.');
         }
 

@@ -7,6 +7,7 @@ use Sumup\Api\Traits\HydratorTrait;
 class TransactionEvent
 {
     use HydratorTrait;
+
     const MAP_JSON_TO_ENTITY = [
                 'transactionId'=>['path'=>'transaction_id'],
                 'eventType'=>['path'=>'type'],

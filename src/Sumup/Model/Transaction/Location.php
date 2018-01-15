@@ -7,9 +7,11 @@ use Sumup\Api\Traits\HydratorTrait;
 class Location
 {
     use HydratorTrait;
+
     const MAP_JSON_TO_ENTITY = [
         'horizontalAccuracy' => ['path' => 'horizontal_accuracy']
         ];
+
     /**
      * @var float
      */

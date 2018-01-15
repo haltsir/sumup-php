@@ -39,15 +39,16 @@ class ReceiptTest extends TestCase
         }
     }
 
-    public function testGetReceipt(){
+    public function testGetReceipt()
+    {
 
         $transactionId = 'f5a5736a-e31d-4fd8-9c95-ac9bc29fdffb';
-        $options = ['mid'=>'MDLA2XYL'];
-        $receipt = $this->receiptService->get($transactionId,$options);
+        $options = ['mid' => 'MDLA2XYL'];
+        $receipt = $this->receiptService->get($transactionId, $options);
 
-        $this->assertInstanceOf(Receipt::class,$receipt);
-        $this->assertInstanceOf(Transaction::class,$receipt->transaction);
-        $this->assertInstanceOf(Card::class,$receipt->transaction->card);
-        $this->assertInstanceOf(Acquirer::class,$receipt->transaction->card);
+        $this->assertInstanceOf(Receipt::class, $receipt);
+        $this->assertInstanceOf(Transaction::class, $receipt->transaction);
+        $this->assertInstanceOf(Card::class, $receipt->transaction->card);
+        $this->assertInstanceOf(Acquirer::class, $receipt->transaction->card);
     }
 }

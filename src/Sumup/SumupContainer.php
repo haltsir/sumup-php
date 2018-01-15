@@ -331,6 +331,7 @@ class SumupContainer extends Container implements ContainerInterface
                                       $container['validator.allowed_arguments'],
                                       $container['validator.required_arguments']);
         });
+
     }
 
     /**
