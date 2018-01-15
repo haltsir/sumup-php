@@ -7,6 +7,7 @@ use Sumup\Api\Traits\HydratorTrait;
 class Emv
 {
     use HydratorTrait;
+
     /**
      * @var string
      */
