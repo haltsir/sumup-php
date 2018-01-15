@@ -38,6 +38,7 @@ use Sumup\Api\Model\Payout\Settings;
 use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
+use Sumup\Api\Model\Transaction\Receipt;
 use Sumup\Api\Model\Transaction\Transaction;
 use Sumup\Api\Model\Transaction\TransactionHistory;
 use Sumup\Api\Model\Transaction\TransactionItem;
@@ -56,6 +57,7 @@ use Sumup\Api\Service\Merchant\PriceService;
 use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Service\Payout\SettingsService;
+use Sumup\Api\Service\Transaction\ReceiptService;
 use Sumup\Api\Service\Transaction\TransactionService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
@@ -318,6 +320,17 @@ class SumupContainer extends Container implements ContainerInterface
                                        $container['http.request'],$this['payment_instrument.factory']);
         });
 
+        /* Receipt */
+        $this['receipt.model'] = $this->factory(function () {
+            return new Receipt();
+        });
+
+        $this['receipt.service'] = $this->factory(function ($container) {
+            return new ReceiptService($container['configuration'], $container['oauth.client'],
+                                      $container['http.request'], $container['receipt.model'],
+                                      $container['validator.allowed_arguments'],
+                                      $container['validator.required_arguments']);
+        });
     }
 
     /**

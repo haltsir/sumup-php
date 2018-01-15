@@ -9,6 +9,12 @@ class Card
 {
     use HydratorTrait, SerializerTrait;
 
+    const MAP_JSON_TO_ENTITY = [
+        'last4Digits' => ['path' => 'last_4_digits'],
+        'expiryYear' => ['path' => 'expiry_year'],
+        'expiryMonth' => ['path' => 'expiry_month'],
+        ];
+
     /**
      * @var string
      */

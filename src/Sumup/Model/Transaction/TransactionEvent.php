@@ -2,12 +2,30 @@
 
 namespace Sumup\Api\Model\Transaction;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class TransactionEvent
 {
+    use HydratorTrait;
+    const MAP_JSON_TO_ENTITY = [
+                'transactionId'=>['path'=>'transaction_id'],
+                'eventType'=>['path'=>'type'],
+                'amount'=>['path'=>'amount'],
+                'freeAmount'=>['path'=>'free_amount'],
+                'installmentNumber'=>['path'=>'installment_number'],
+                'deductedAmount'=>['path'=>'deducted_amount'],
+                'deductedFreeAmount'=>['path'=>'deducted_fee_amount'],
+    ];
+
     /**
      * @var int
      */
     public $id;
+
+    /**
+     * @var string
+     */
+    public $transactionId;
 
     /**
      * @var string
@@ -20,19 +38,19 @@ class TransactionEvent
     public $status;
 
     /**
-     * @var int
+     * @var float
      */
     public $amount;
 
     /**
      * @var string
      */
-    public $dueDate;
+    public $timestamp;
 
     /**
-     * @var string
+     * @var float
      */
-    public $date;
+    public $freeAmount;
 
     /**
      * @var int
@@ -40,7 +58,13 @@ class TransactionEvent
     public $installmentNumber;
 
     /**
-     * @var string
+     * @var float
      */
-    public $timestamp;
+    public $deductedAmount;
+
+    /**
+     * @var float
+     */
+    public $deductedFreeAmount;
+
 }

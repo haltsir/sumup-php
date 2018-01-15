@@ -2,12 +2,21 @@
 
 namespace Sumup\Api\Model\Transaction;
 
+use Sumup\Api\Model\Checkout\Card;
 use Sumup\Api\Traits\HydratorTrait;
 use Sumup\Api\Traits\SerializerTrait;
 
 class Transaction
 {
     use HydratorTrait, SerializerTrait;
+
+    const MAP_JSON_TO_ENTITY = [
+        'card' => ['path' => 'card', 'type' => Card::class],
+        'elvAccount' => ['path' => 'elv_account', 'type' => ElvAccount::class],
+        'products' => ['path' => 'products', 'type' => 'array', 'subtype' => TransactionProduct::class],
+        'events' => ['path' => 'events', 'type' => 'array', 'subtype' => TransactionEvent::class],
+        'location' => ['path' => 'location', 'type' => Location::class],
+    ];
 
     /**
      * @var string
