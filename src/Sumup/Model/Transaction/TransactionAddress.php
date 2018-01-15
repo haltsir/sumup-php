@@ -2,8 +2,12 @@
 
 namespace Sumup\Api\Model\Transaction;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class TransactionAddress
 {
+    use HydratorTrait;
+
     /**
      * @var string
      */

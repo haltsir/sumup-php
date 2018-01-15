@@ -2,8 +2,12 @@
 
 namespace Sumup\Api\Model\Transaction;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class Acquirer
 {
+    use HydratorTrait;
+
     /**
      * @var string
      */

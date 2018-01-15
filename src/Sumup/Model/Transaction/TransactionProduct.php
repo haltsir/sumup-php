@@ -2,8 +2,16 @@
 
 namespace Sumup\Api\Model\Transaction;
 
+use Sumup\Api\Traits\HydratorTrait;
+
 class TransactionProduct
 {
+    use HydratorTrait;
+
+    const MAP_JSON_TO_ENTITY = [
+        'totalPrice' => ['path' => 'total_price'],
+];
+
     /**
      * @var string
      */
