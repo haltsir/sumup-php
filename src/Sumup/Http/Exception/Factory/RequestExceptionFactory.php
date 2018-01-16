@@ -3,8 +3,8 @@
 namespace Sumup\Api\Http\Exception\Factory;
 
 use GuzzleHttp\Exception\ClientException;
-use Sumup\Api\Error\ApiError;
-use Sumup\Api\Error\ApiErrorContainer;
+use Sumup\Api\Exception\ApiError;
+use Sumup\Api\Exception\ApiErrorContainer;
 use Sumup\Api\Http\Exception\RequestException;
 use Sumup\Api\Http\Exception\UnknownResponseException;
 
@@ -92,5 +92,4 @@ class RequestExceptionFactory
         }
         return $this->apiErrorContainer->createFromArray($errorsArray);
     }
-
 }

@@ -2,7 +2,7 @@
 
 namespace Sumup\Api\Http\Exception;
 
-use Sumup\Api\Error\ApiErrorContainer;
+use Sumup\Api\Exception\ApiErrorContainer;
 
 class RequestException extends \Exception implements RequestExceptionInterface
 {
@@ -29,5 +29,4 @@ class RequestException extends \Exception implements RequestExceptionInterface
     {
         return $this->errors->first();
     }
-
 }

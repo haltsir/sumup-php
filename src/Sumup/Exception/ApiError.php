@@ -1,7 +1,6 @@
 <?php
 
-namespace Sumup\Api\Error;
-
+namespace Sumup\Api\Exception;
 
 class ApiError
 {
@@ -71,8 +70,4 @@ class ApiError
         $this->message = $message;
         return $this;
     }
-
-
-
-
 }
