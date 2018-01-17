@@ -1,7 +1,6 @@
 <?php
 
-namespace Sumup\Api\Error;
-
+namespace Sumup\Api\Exception;
 
 class ApiErrorContainer implements \ArrayAccess, \Countable
 {

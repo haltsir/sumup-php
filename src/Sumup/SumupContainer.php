@@ -9,12 +9,13 @@ use Sumup\Api\Cache\File\FileCacheItemPool;
 use Sumup\Api\Configuration\Configuration;
 use Sumup\Api\Container\Exception\ContainerException;
 use Sumup\Api\Container\Exception\NotFoundException;
-use Sumup\Api\Error\ApiError;
-use Sumup\Api\Error\ApiErrorContainer;
+use Sumup\Api\Exception\ApiError;
+use Sumup\Api\Exception\ApiErrorContainer;
 use Sumup\Api\Http\Exception\Factory\RequestExceptionFactory;
 use Sumup\Api\Model\Customer\PaymentInstrument;
 use Sumup\Api\Model\Factory\CompletedCheckoutFactory;
 use Sumup\Api\Model\Factory\CustomerFactory;
+use Sumup\Api\Model\Factory\RefundFactory;
 use Sumup\Api\Model\Factory\TransactionFactory;
 use Sumup\Api\Model\Factory\TransactionHistoryFactory;
 use Sumup\Api\Model\Factory\TransactionItemFactory;
@@ -39,6 +40,7 @@ use Sumup\Api\Model\Product\Price;
 use Sumup\Api\Model\Product\Product;
 use Sumup\Api\Model\Product\Shelf;
 use Sumup\Api\Model\Transaction\Receipt;
+use Sumup\Api\Model\Transaction\Refund;
 use Sumup\Api\Model\Transaction\Transaction;
 use Sumup\Api\Model\Transaction\TransactionHistory;
 use Sumup\Api\Model\Transaction\TransactionItem;
@@ -58,6 +60,7 @@ use Sumup\Api\Service\Merchant\ProductService;
 use Sumup\Api\Service\Merchant\ShelfService;
 use Sumup\Api\Service\Payout\SettingsService;
 use Sumup\Api\Service\Transaction\ReceiptService;
+use Sumup\Api\Service\Transaction\RefundService;
 use Sumup\Api\Service\Transaction\TransactionService;
 use Sumup\Api\Validator\AllowedArgumentsValidator;
 use Sumup\Api\Validator\RequiredArgumentsValidator;
@@ -330,6 +333,21 @@ class SumupContainer extends Container implements ContainerInterface
                                       $container['http.request'], $container['receipt.model'],
                                       $container['validator.allowed_arguments'],
                                       $container['validator.required_arguments']);
+        });
+
+        /* Refund */
+        $this['refund.model'] = $this->factory(function () {
+            return new Refund();
+        });
+
+        $this['refund.factory'] = $this->factory(function ($container) {
+            return new RefundFactory($container['refund.model'], $container['collection']);
+        });
+
+        $this['refund.service'] = $this->factory(function ($container) {
+            return new RefundService($container['configuration'], $container['oauth.client'], $container['refund.factory'],
+                                     $container['http.request'], $container['validator.allowed_arguments']
+            );
         });
 
     }

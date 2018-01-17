@@ -49,6 +49,6 @@ class ReceiptTest extends TestCase
         $this->assertInstanceOf(Receipt::class, $receipt);
         $this->assertInstanceOf(Transaction::class, $receipt->transaction);
         $this->assertInstanceOf(Card::class, $receipt->transaction->card);
-        $this->assertInstanceOf(Acquirer::class, $receipt->transaction->card);
+        $this->assertInstanceOf(Acquirer::class, $receipt->acquirerData);
     }
 }
