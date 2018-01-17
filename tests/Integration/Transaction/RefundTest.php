@@ -53,13 +53,12 @@ class RefundTest extends TestCase
 
     public function testRefund()
     {
-
         $checkoutData = [
             'checkout_reference' => 'sumup-php-checkout-' . uniqid(),
             'amount' => 10,
             'currency' => 'GBP',
             'pay_to_email' => getenv('SUMUP_TEST_USERNAME'),
-            'pay_from_email' => 'test@example.org',
+            'pay_from_email' => 'test11@example.org',
             'fee_amount' => 2,
             'description' => 'test checkout',
             'return_url' => 'none'
@@ -69,30 +68,10 @@ class RefundTest extends TestCase
             'payment_type' => 'card',
             'card' => [
                 'name' => 'Test Testov',
-                'number' => 4222222222222,
+                'number' => 4111111111111111,
                 'expiry_year' => (string)date('Y'),
                 'expiry_month' => '12',
                 'cvv' => 123
-            ]
-        ];
-
-        $personalProfile = [
-            "first_name" => "test_first_name",
-            "last_name" => "test_last_name",
-            "date_of_birth" => "08-06-1991",
-            "mobile_phone" => "+447700900518",
-            "address" => [
-                "address_line1" => "example test 1",
-                "address_line2" => "example test 2",
-                "city" => "london",
-                "country" => "GB",
-                "region_id" => 434,
-                "region_name" => "test name",
-                "post_code" => "EC1A 1BB",
-                "landline" => "+442071387901",
-                "first_name" => "test_first_name",
-                "last_name" => "test_last_name",
-                "company" => "test-co"
             ]
         ];
 
@@ -100,9 +79,8 @@ class RefundTest extends TestCase
             "amount" => 10
         ];
 
-        $this->personalProfileService->create($personalProfile);
         $createdCheckout = $this->checkoutService->create($checkoutData);
         $checkoutResult = $this->checkoutService->complete($createdCheckout->id, $completeData);
-        $this->assertTrue($this->refundService->refund($checkoutResult->transactionId, $body));
+        $this->assertTrue($this->refundService->refund($checkoutResult->transactions[0]->id, $body));
     }
 }

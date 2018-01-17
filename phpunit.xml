@@ -8,6 +8,7 @@
         <testsuite name="Integration">
             <file>tests/Integration/Account/PersonalProfileTest.php</file>
             <file>tests/Integration/Merchant/MerchantProfileTest.php</file>
+            <file>tests/Integration/Transaction/RefundTest.php</file>
             <!--<file>tests/Integration/Checkout/CheckoutTest.php</file>-->
             <directory>tests/Integration</directory>
         </testsuite>
