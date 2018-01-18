@@ -1,7 +1,17 @@
 <?php
+
 namespace Tests\Unit\Cache;
+
+use ErrorException;
 use PHPUnit\Framework\TestCase;
 use Sumup\Api\Cache\File\FileCacheItemPool;
+
+set_error_handler(function($severity, $message, $file, $line) {
+    if (!(error_reporting() & $severity)) {
+        return;
+    }
+    throw new ErrorException($message, 0, $severity, $file, $line);
+});
 
 class FileCachePoolTest extends TestCase
 {

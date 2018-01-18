@@ -30,7 +30,7 @@ class PersonalProfileTest extends TestCase
 
         try {
             $this->client = new SumupClient($configuration);
-            $this->personalProfileService = $this->client->createService('personal_profile');
+            $this->personalProfileService = $this->client->createService('profile');
         } catch (SumupClientException $clientException) {
             $this->fail($clientException->getMessage());
         }

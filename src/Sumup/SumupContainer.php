@@ -90,12 +90,12 @@ class SumupContainer extends Container implements ContainerInterface
             return new ApiErrorContainer();
         });
 
-        $this['request_exception_factory'] = $this->factory(function ($container) {
-            return new RequestExceptionFactory($container['api_error'], $container['api_error_container']);
+        $this['request_exception_factory'] = $this->factory(function (ContainerInterface $container) {
+            return new RequestExceptionFactory($container->get('api_error'), $container->get('api_error_container'));
         });
 
-        $this['http.request'] = $this->factory(function ($container) {
-            return new Request($container['http.client'], $container['request_exception_factory']);
+        $this['http.request'] = $this->factory(function (ContainerInterface $container) {
+            return new Request($container->get('http.client'), $container->get('request_exception_factory'));
         });
 
         /* Validators */
@@ -110,16 +110,19 @@ class SumupContainer extends Container implements ContainerInterface
             return new Configuration();
         };
 
-        $this['cache.pool'] = function ($container) {
-            return new FileCacheItemPool($container['cache.file.path']);
+        $this['cache.pool'] = function (ContainerInterface $container) {
+            return new FileCacheItemPool($container->get('cache.file.path'));
         };
 
         $this['oauth.factory.client'] = $this->factory(function () {
             return new OAuthClientFactory();
         });
-        $this['oauth.client'] = $this->factory(function ($container) {
-            return $this['oauth.factory.client']->create($container['configuration'], $container['http.client'],
-                                                         $container['cache.pool']);
+        $this['oauth.client'] = $this->factory(function (ContainerInterface $container) {
+            return $this['oauth.factory.client']->create(
+                $container->get('configuration'),
+                $container->get('http.client'),
+                $container->get('cache.pool')
+            );
         });
 
         $this['collection'] = $this->factory(function () {
@@ -130,78 +133,106 @@ class SumupContainer extends Container implements ContainerInterface
         $this['me.model'] = $this->factory(function () {
             return new Me();
         });
-        $this['account.service'] = $this->factory(function ($container) {
-            return new AccountService($container['configuration'], $container['oauth.client'],
-                                      $container['http.request'], $container['me.model'],
-                                      $container['validator.allowed_arguments']);
+        $this['account.service'] = $this->factory(function (ContainerInterface $container) {
+            return new AccountService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('me.model'),
+                $container->get('validator.allowed_arguments')
+            );
         });
 
         /* Merchant Profile */
         $this['merchant.model'] = $this->factory(function () {
             return new Merchant;
         });
-        $this['merchant.profile.service'] = $this->factory(function ($container) {
-            return new MerchantProfileService($container['configuration'], $container['oauth.client'],
-                                              $container['http.request'], $container['merchant.model']);
+        $this['merchant.profile.service'] = $this->factory(function (ContainerInterface $container) {
+            return new MerchantProfileService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('merchant.model')
+            );
         });
 
         /* Personal Profile */
         $this['profile.model'] = $this->factory(function () {
             return new Profile();
         });
-        $this['personal_profile.service'] = $this->factory(function ($container) {
-            return new PersonalProfileService($container['profile.model'], $container['validator.required_arguments'],
-                                              $container['http.request'],
-                                              $container['configuration'], $container['oauth.client']);
+        $this['profile.service'] = $this->factory(function (ContainerInterface $container) {
+            return new PersonalProfileService(
+                $container->get('profile.model'),
+                $container->get('validator.required_arguments'),
+                $container->get('http.request'),
+                $container->get('configuration'),
+                $container->get('oauth.client')
+            );
         });
 
         /* Shelves */
         $this['shelf.model'] = $this->factory(function () {
             return new Shelf;
         });
-        $this['shelf.factory'] = $this->factory(function ($container) {
-            return new ShelfFactory($container['shelf.model'], $container['collection']);
+        $this['shelf.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new ShelfFactory($container->get('shelf.model'), $container->get('collection'));
         });
-        $this['shelf.service'] = $this->factory(function ($container) {
-            return new ShelfService($container['configuration'], $container['oauth.client'],
-                                    $container['http.request'], $container['validator.allowed_arguments'],
-                                    $container['validator.required_arguments'], $container['shelf.factory']);
+        $this['shelf.service'] = $this->factory(function (ContainerInterface $container) {
+            return new ShelfService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('validator.allowed_arguments'),
+                $container->get('validator.required_arguments'),
+                $container->get('shelf.factory'));
         });
 
         /* Product */
         $this['product.model'] = $this->factory(function () {
             return new Product();
         });
-        $this['product.factory'] = $this->factory(function ($container) {
-            return new ProductFactory($container['product.model'], $container['collection']);
+        $this['product.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new ProductFactory($container->get('product.model'), $container->get('collection'));
         });
-        $this['product.service'] = $this->factory(function ($container) {
-            return new ProductService($container['configuration'], $container['oauth.client'],
-                                      $container['http.request'], $container['validator.required_arguments'],
-                                      $container['product.factory']);
+        $this['product.service'] = $this->factory(function (ContainerInterface $container) {
+            return new ProductService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('validator.required_arguments'),
+                $container->get('product.factory')
+            );
         });
 
         /* Price */
         $this['price.model'] = $this->factory(function () {
             return new Price();
         });
-        $this['price.factory'] = $this->factory(function ($container) {
-            return new PriceFactory($container['price.model'], $container['collection']);
+        $this['price.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new PriceFactory($container->get('price.model'), $container->get('collection'));
         });
-        $this['price.service'] = $this->factory(function ($container) {
-            return new PriceService($container['configuration'], $container['oauth.client'],
-                                    $container['http.request'], $container['validator.required_arguments'],
-                                    $container['price.factory']);
+        $this['price.service'] = $this->factory(function (ContainerInterface $container) {
+            return new PriceService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('validator.required_arguments'),
+                $container->get('price.factory')
+            );
         });
 
         /* Business */
         $this['business.model'] = $this->factory(function () {
             return new Business();
         });
-        $this['business.service'] = $this->factory(function ($container) {
-            return new BusinessService($container['configuration'], $container['oauth.client'],
-                                       $container['http.request'], $container['validator.required_arguments'],
-                                       $container['business.model']);
+        $this['business.service'] = $this->factory(function (ContainerInterface $container) {
+            return new BusinessService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('validator.required_arguments'),
+                $container->get('business.model')
+            );
         });
 
         /* Operator */
@@ -209,36 +240,49 @@ class SumupContainer extends Container implements ContainerInterface
             return new Operator();
         });
 
-        $this['operator.factory'] = $this->factory(function ($container) {
-            return new OperatorFactory($container['operator.model'], $container['collection']);
+        $this['operator.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new OperatorFactory($container->get('operator.model'), $container->get('collection'));
         });
 
-        $this['operator.service'] = $this->factory(function ($container) {
-            return new OperatorService($container['operator.factory'], $container['collection'],
-                                       $container['validator.required_arguments'], $container['http.request'],
-                                       $container['configuration'], $container['oauth.client']);
+        $this['operator.service'] = $this->factory(function (ContainerInterface $container) {
+            return new OperatorService(
+                $container->get('operator.factory'),
+                $container->get('collection'),
+                $container->get('validator.required_arguments'),
+                $container->get('http.request'),
+                $container->get('configuration'),
+                $container->get('oauth.client')
+            );
         });
 
         /* Bank Account */
         $this['bank_account.model'] = $this->factory(function () {
             return new BankAccount();
         });
-        $this['bank_account.factory'] = $this->factory(function ($container) {
-            return new BankAccountFactory($container['bank_account.model'], $container['collection']);
+        $this['bank_account.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new BankAccountFactory($container->get('bank_account.model'), $container->get('collection'));
         });
-        $this['bank_account.service'] = $this->factory(function ($container) {
-            return new BankAccountService($container['configuration'], $container['oauth.client'],
-                                          $container['http.request'], $container['bank_account.factory'],
-                                          $container['validator.required_arguments']);
+        $this['bank_account.service'] = $this->factory(function (ContainerInterface $container) {
+            return new BankAccountService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('bank_account.factory'),
+                $container->get('validator.required_arguments')
+            );
         });
 
         /* Payout Settings */
         $this['payout.settings.model'] = $this->factory(function () {
             return new Settings();
         });
-        $this['payout.settings.service'] = $this->factory(function ($container) {
-            return new SettingsService($container['configuration'], $container['oauth.client'],
-                                       $container['http.request'], $container['payout.settings.model']);
+        $this['payout.settings.service'] = $this->factory(function (ContainerInterface $container) {
+            return new SettingsService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('payout.settings.model')
+            );
         });
 
         /* App Settings */
@@ -246,9 +290,13 @@ class SumupContainer extends Container implements ContainerInterface
             return new AppSettings();
 
         });
-        $this['app.settings.service'] = $this->factory(function ($container) {
-            return new AppSettingsService($container['configuration'], $container['oauth.client'],
-                                          $container['http.request'], $container['app.settings.model']);
+        $this['app.settings.service'] = $this->factory(function (ContainerInterface $container) {
+            return new AppSettingsService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('app.settings.model')
+            );
         });
 
         /* Checkout */
@@ -258,17 +306,24 @@ class SumupContainer extends Container implements ContainerInterface
         $this['checkout.completed_checkout.model'] = $this->factory(function () {
             return new CompletedCheckout();
         });
-        $this['checkout.factory'] = $this->factory(function ($container) {
-            return new CheckoutFactory($container['checkout.model'], $container['collection']);
+        $this['checkout.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new CheckoutFactory($container->get('checkout.model'), $container->get('collection'));
         });
-        $this['checkout.completed_checkout.factory'] = $this->factory(function ($container) {
-            return new CompletedCheckoutFactory($container['checkout.completed_checkout.model'], $container['collection']);
+        $this['checkout.completed_checkout.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new CompletedCheckoutFactory(
+                $container->get('checkout.completed_checkout.model'),
+                $container->get('collection')
+            );
         });
-        $this['checkout.service'] = $this->factory(function ($container) {
-            return new CheckoutService($container['configuration'], $container['oauth.client'],
-                                       $container['http.request'], $container['checkout.factory'],
-                                       $container['checkout.completed_checkout.factory'],
-                                       $container['validator.required_arguments']);
+        $this['checkout.service'] = $this->factory(function (ContainerInterface $container) {
+            return new CheckoutService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('checkout.factory'),
+                $container->get('checkout.completed_checkout.factory'),
+                $container->get('validator.required_arguments')
+            );
         });
 
         /* Customer */
@@ -276,51 +331,69 @@ class SumupContainer extends Container implements ContainerInterface
             return new Customer();
         });
 
-        $this['customer.factory'] = $this->factory(function ($container) {
-            return new CustomerFactory($container['customer.model'], $container['collection']);
+        $this['customer.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new CustomerFactory($container->get('customer.model'), $container->get('collection'));
         });
 
-        $this['customer.service'] = $this->factory(function ($container) {
-            return new CustomerService($container['configuration'], $container['oauth.client'],
-                                       $container['http.request'],$this['customer.factory']);
+        $this['customer.service'] = $this->factory(function (ContainerInterface $container) {
+            return new CustomerService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('customer.factory')
+            );
         });
 
         /* Transaction */
         $this['transaction.history.model'] = $this->factory(function () {
             return new TransactionHistory();
         });
-        $this['transaction.history.factory'] = function ($container) {
-            return new TransactionHistoryFactory($container['transaction.history.model'], $container['collection']);
+        $this['transaction.history.factory'] = function (ContainerInterface $container) {
+            return new TransactionHistoryFactory(
+                $container->get('transaction.history.model'),
+                $container->get('collection')
+            );
         };
         $this['transaction.item.model'] = $this->factory(function () {
             return new TransactionItem();
         });
-        $this['transaction.item.factory'] = function ($container) {
-            return new TransactionItemFactory($container['transaction.item.model'], $container['collection']);
+        $this['transaction.item.factory'] = function (ContainerInterface $container) {
+            return new TransactionItemFactory($container->get('transaction.item.model'), $container->get('collection'));
         };
         $this['transaction.model'] = $this->factory(function () {
             return new Transaction();
         });
-        $this['transaction.factory'] = function ($container) {
-            return new TransactionFactory($container['transaction.model'], $container['collection']);
+        $this['transaction.factory'] = function (ContainerInterface $container) {
+            return new TransactionFactory($container->get('transaction.model'), $container->get('collection'));
         };
-        $this['transaction.service'] = $this->factory(function ($container) {
-            return new TransactionService($container['configuration'], $container['oauth.client'],
-                                          $container['http.request'], $container['transaction.factory'],
-                                          $container['transaction.history.factory'],
-                                          $container['validator.allowed_arguments']);
+        $this['transaction.service'] = $this->factory(function (ContainerInterface $container) {
+            return new TransactionService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('transaction.factory'),
+                $container->get('transaction.history.factory'),
+                $container->get('validator.allowed_arguments')
+            );
         });
 
         /* Payment Instrument */
         $this['payment_instrument.model'] = $this->factory(function () {
             return new PaymentInstrument();
         });
-        $this['payment_instrument.factory'] = $this->factory(function ($container) {
-            return new PaymentInstrumentFactory($container['payment_instrument.model'], $container['collection']);
+        $this['payment_instrument.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new PaymentInstrumentFactory(
+                $container->get('payment_instrument.model'),
+                $container->get('collection')
+            );
         });
-        $this['payment_instrument.service'] = $this->factory(function ($container) {
-            return new PaymentInstrumentService($container['configuration'], $container['oauth.client'],
-                                       $container['http.request'],$this['payment_instrument.factory']);
+        $this['payment_instrument.service'] = $this->factory(function (ContainerInterface $container) {
+            return new PaymentInstrumentService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('payment_instrument.factory')
+            );
         });
 
         /* Receipt */
@@ -328,11 +401,15 @@ class SumupContainer extends Container implements ContainerInterface
             return new Receipt();
         });
 
-        $this['receipt.service'] = $this->factory(function ($container) {
-            return new ReceiptService($container['configuration'], $container['oauth.client'],
-                                      $container['http.request'], $container['receipt.model'],
-                                      $container['validator.allowed_arguments'],
-                                      $container['validator.required_arguments']);
+        $this['receipt.service'] = $this->factory(function (ContainerInterface $container) {
+            return new ReceiptService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('http.request'),
+                $container->get('receipt.model'),
+                $container->get('validator.allowed_arguments'),
+                $container->get('validator.required_arguments')
+            );
         });
 
         /* Refund */
@@ -340,13 +417,17 @@ class SumupContainer extends Container implements ContainerInterface
             return new Refund();
         });
 
-        $this['refund.factory'] = $this->factory(function ($container) {
-            return new RefundFactory($container['refund.model'], $container['collection']);
+        $this['refund.factory'] = $this->factory(function (ContainerInterface $container) {
+            return new RefundFactory($container->get('refund.model'), $container->get('collection'));
         });
 
-        $this['refund.service'] = $this->factory(function ($container) {
-            return new RefundService($container['configuration'], $container['oauth.client'], $container['refund.factory'],
-                                     $container['http.request'], $container['validator.allowed_arguments']
+        $this['refund.service'] = $this->factory(function (ContainerInterface $container) {
+            return new RefundService(
+                $container->get('configuration'),
+                $container->get('oauth.client'),
+                $container->get('refund.factory'),
+                $container->get('http.request'),
+                $container->get('validator.allowed_arguments')
             );
         });
 
