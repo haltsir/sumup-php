@@ -1,12 +1,16 @@
 {
     "name": "sumup/sumup-php-api",
-    "description": "SumUp PHP Client",
+    "description": "SumUp PHP API Client",
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Strahil Minev",
             "email": "strahil.minev@sumup.com"
+        },
+        {
+            "name": "Zdravko Iliev",
+            "email": "zdravko.iliev@sumup.com"
         }
     ],
     "require": {
@@ -28,8 +32,7 @@
             "Tests\\" : "tests"
         },
         "files": [
-            "src/Sumup/Support/helpers.php",
-            "src/Sumup/Support/setup.php"
+            "src/Sumup/Support/helpers.php"
         ]
     }
 }
